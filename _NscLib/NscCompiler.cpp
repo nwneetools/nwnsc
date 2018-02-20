@@ -41,8 +41,6 @@
 #include "Precomp.h"
 #include "Nsc.h"
 #include "NscContext.h"
-//#include "NscPStackEntry.h"
-//#include "NscSymbolTable.h"
 #include "NscCodeGenerator.h"
 #include "NscIntrinsicDefs.h"
 
@@ -310,7 +308,8 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	// continue to allow if the user requires compatibility.
 	//
 
-	if (nVersion <= 174)  // Note, the current (last) stock compiler has the bug
+
+	if (!pCompiler ->GetStrictModeEnabled ())  // Note, the current (last) stock compiler has the bug
 	{
 		sCtx .SetWarnAllowDefaultInitializedConstants (true);
 		sCtx .SetWarnAllowMismatchedPrototypes (true);
@@ -714,8 +713,9 @@ NscCompiler::NscCompileScript (
 
 	assert (m_ErrorOutput == NULL);
 	m_ErrorOutput = ErrorOutput;
-	m_ShowIncludes = (CompilerFlags & NscCompilerFlag_ShowIncludes) != false;
-	m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != false;
+	m_ShowIncludes = (CompilerFlags & NscCompilerFlag_ShowIncludes) != 0;
+	m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
+	m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
 
 	Result = NscCompileScript (ScriptName,
 		(FileSize != 0) ? &FileContents [0] : NULL,
@@ -731,6 +731,7 @@ NscCompiler::NscCompileScript (
 	m_ErrorOutput = NULL;
 	m_ShowIncludes = false;
 	m_ShowPreprocessed = false;
+    m_StrictModeEnabled = false;
 
 	return Result;
 }
@@ -817,6 +818,7 @@ NscCompiler::NscCompileScript (
 		m_ErrorOutput = ErrorOutput;
 		m_ShowIncludes = (CompilerFlags & NscCompilerFlag_ShowIncludes) != 0;
 		m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
+		m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
 
 		//
 		// Compile the script.
@@ -839,6 +841,7 @@ NscCompiler::NscCompileScript (
 		m_ErrorOutput = NULL;
 		m_ShowIncludes = false;
 		m_ShowPreprocessed = false;
+        m_StrictModeEnabled = false;
 
 		//
 		// Only NscResult_Success actually returns output that is meaningful, so
@@ -1418,10 +1421,10 @@ NscCompiler::LoadResource (
 			std::string AccessorName;
 
 			m_ResourceManager .GetResourceAccessorName (Handle, AccessorName);
-			printf ("ShowIncludes: Handled resource %s.%s from %s.\n",
-				pszName,
-				m_ResourceManager .ResTypeToExt (nResType),
-				AccessorName .c_str ());
+			printf ("ShowIncludes: Handled resource %s/%s.%s\n",
+					AccessorName .c_str (),
+					pszName,
+					m_ResourceManager .ResTypeToExt (nResType));
 		}
 		catch (std::exception)
 		{

@@ -1681,6 +1681,10 @@ Environment:
                         }
                             break;
 
+                        case 's':
+                            CompilerFlags |= NscCompilerFlag_StrictModeEnabled;
+                            break;
+
                         case 'v':
                             Version = true;
                             break;
@@ -1770,12 +1774,12 @@ Environment:
     if ((Version) || (Error) || (InFiles.empty())) {
         printf(
                 "\nUsage:\n"
-                        "nwnsc [-adegjklorqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
+                        "nwnsc [-adegjklorsqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  batchoutdir - Supplies the location where batch mode places output files\n"
                         "  homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights).\n"
                         "  pathspec    - Semicolon separated list of folders to search for additional includes.\n"
-                        "  installdir  - Neverwinter Nights install folder.\n"
+                        "  installdir  - Neverwinter Nights install folder. Use with -l to load base game includes.\n"
                         "  mode        - Compiler mode 1.69 or 1.74 - (default 1.74) \n"
                         "  errprefix   - Prefix string to prepend to compiler errors (default \"Error\").\n\n"
                         "  -d - Disassemble the script (overrides default compile.\n"
@@ -1788,6 +1792,8 @@ Environment:
                         "  -p - Dump internal PCode for compiled script contributions.\n"
                         "  -q - Silence most messages.\n"
                         "  -r - Filename for output file.\n"
+                        "  -s - Enable Strict mode. This disables stock compiler compatibility that allows\n"
+                        "       some potentially unsafe conditions. (default: off)\n"
                         "  -v - Version info and Detailed Usage.\n"
                         "  -y - Continue processing input files even on error.\n\n"
         );

@@ -144,6 +144,7 @@ enum NscCompilerFlags
 	NscCompilerFlag_DumpPCode 			= 0x00000001,
 	NscCompilerFlag_ShowIncludes		= 0x00000002,
 	NscCompilerFlag_ShowPreprocessed	= 0x00000004,
+	NscCompilerFlag_StrictModeEnabled	= 0x00000008,
 };
 
 //-----------------------------------------------------------------------------
@@ -1067,6 +1068,10 @@ public:
 		m_Initialized = false;
 	}
 
+	bool GetStrictModeEnabled () {
+		return m_StrictModeEnabled;
+	}
+
 	// @cmember Set local include paths (searched before the resource system).
 
 	//
@@ -1286,6 +1291,7 @@ private:
 		);
 
 	ResourceManager             & m_ResourceManager;
+	bool 						  m_StrictModeEnabled;
 	bool                          m_EnableExtensions;
 	bool                          m_ShowIncludes;
 	bool                          m_ShowPreprocessed;
