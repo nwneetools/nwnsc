@@ -121,7 +121,7 @@ public:
     {
         char buf[8193];
 
-        snprintf(buf, sizeof(buf), fmt, ap);
+        vsnprintf(buf, sizeof(buf), fmt, ap);
 
         puts(buf);
 
@@ -675,7 +675,7 @@ Environment:
     strncpy(filec, InFile.RefStr, _MAX_FNAME);
 
     if (!Quiet) {
-        TextOut->WriteText("Compiling: %s.nss\n", InFile);
+        TextOut->WriteText("Compiling: %s.nss\n", InFile.RefStr);
     }
 
     //
@@ -706,7 +706,7 @@ Environment:
             if (!Quiet) {
                 TextOut->WriteText(
                         "%s.nss is an include file, ignored.\n",
-                        InFile);
+                        InFile.RefStr);
             }
 
             return true;
@@ -850,7 +850,7 @@ Environment:
     if (!Quiet) {
         TextOut->WriteText(
                 "Diassembling: %s\n",
-                InFile);
+                InFile.RefStr);
     }
 
     //
