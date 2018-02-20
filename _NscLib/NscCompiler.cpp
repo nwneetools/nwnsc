@@ -1255,10 +1255,10 @@ NscCompiler::LoadResource (
 
 			if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
 			{
-				printf ("ShowIncludes: Handled resource %s.%s from %s.\n",
-					pszName,
-					m_ResourceManager .ResTypeToExt (nResType),
-					it ->c_str ());
+				printf ("ShowIncludes: Handled resource %s/%s.%s\n",
+                        it ->c_str (),
+                        pszName,
+					   m_ResourceManager .ResTypeToExt (nResType));
 			}
 
 			//
