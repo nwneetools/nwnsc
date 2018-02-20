@@ -20,7 +20,9 @@ Abstract:
 
 #if !defined(_WIN32) && !defined(_WIN64)
 #include <sys/mman.h>
-#elif(__linux__)
+#endif
+
+#if defined(__linux__)
 #include <unistd.h>
 #include <string.h>
 #endif
