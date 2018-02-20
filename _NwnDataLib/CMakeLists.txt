@@ -1,0 +1,11 @@
+add_library(nwndatalib
+        BifFileReader
+        FileWrapper
+        KeyFileReader
+        NWNDataLib
+        NWScriptReader
+        Precomp
+        ResourceAccessor
+        ResourceManager
+        TextOut
+)

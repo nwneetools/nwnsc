@@ -1,0 +1,4 @@
+#include "_NwnUtilLib/version.h"
+
+const std::string gGIT_VERSION = "@VERSION@";
+const std::string gGIT_VERSION_SHORT = "@VERSION_SHORT@";

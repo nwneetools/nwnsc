@@ -1,0 +1,250 @@
+Changes
+-------
+
+Version 20110507-01
+-------------------
+
+- Fixed TimerRegistration::Stop returning the wrong amount of time left on the
+  timer.
+
+- Fixed incorrect timer logic in the TimerManager relating to due time caching.
+
+- swutil::SharedPtr<T> and swutil::SharedBuffer<T> now evaluate the deleter
+  for their input pointer in the constructor, should the shared state not be
+  created successfully.  Previously, the deleter was not evaluated in this case
+  and the caller was responsible for deleting the input pointer.  The new
+  behavior is more consistent with boost and C++0x shared_ptr.
+
+- Imported Edward T. Smith's NWScript compiler with various improvements.
+
+- Added DLL version of NWScript compiler, and NWN2 toolset plugin wrapper to
+  allow the toolset to use the script compiler.
+
+- Added new compiler shell (NWNScriptCompiler) to replace nwnnsscomp.
+
+- Added on demand compilation from source text to NWNScriptConsole.
+
+- Added option to load base resources only to ResourceManager.
+
+- Added UnloadAllResources API to ResourceManager.
+
+- Fixed incorrect behavior of ResourceManager::OpenFileByIndex.
+
+- Added ResourceManager::ForceCloseOpenHandles API.
+
+- Added APIs to query prototype data for scripts to script compiler library.
+
+- Added option to use Granny2 out of process even on x86 (for stability).
+
+- Added custom "first chance" and "last chance" IResourceAccessor support to
+  the ResourceManager.  This allows the user to easily plug in an arbitrary new
+  resource backend to the resource system.
+
+- Added build system support for compiling NWScript scripts.
+
+Version 20101228-01
+-------------------
+
+- Fixed incorrect tint set reading and writing helper functions in the
+  GffFileReader and GffFileWriter classes.
+
+- Fixed I_BOOLAND emitting OpCodes::Xor instead of OpCodes::And in the
+  MSIL/.NET NWScript JIT backend.
+
+- By default, NWNScriptLib now includes action service handler names in its
+  data tables.  The NWScript JIT backend now uses these names (if present) to
+  name direct fast action service handler call stubs, for easier debugging.
+
+- Fixed RESREF parsing in the GffFileReader (security fix).
+
+- Added NWN1 BIF/KEY processing support and NWN1 ERF processing support.  To
+  load NWN1-style datafiles, the user must supply the appropriate new values in
+  the ResourceManager::ModuleLoadParams struct, and LoadModuleResources must be
+  used instead of LoadModuleResourcesLite.
+
+- Fixed pathfinding intersection issues in straight path detection.
+
+- Added mesh manager notification callouts, fix mesh manager list iterator
+  support (thanks to Chris Darken).
+
+- 64-bit builds will now prefer to use memory mapped file I/O when reading HAK,
+  BIF, and ZIP archives.  This significantly improves loading performance,
+  especially for ZIP archives (up to several times faster in some cases).
+
+- Added various additional math support routines, such as cone intersection.
+
+- Added new "ListModuleAreas" sample program that prints a list of all areas in
+  a module.
+
+- Added new "ListModuleModels" sample program that prints a list of all model
+  pieces present in a module and its HAKs (and the default game install files).
+
+- Added new "UpdateModTemplates" sample program that performs bulk updates of
+  placed object instances in a module with new data from their source
+  templates.
+
+- Users of the ResourceManager may now supply a custom search directory for any
+  application-specific resources that they wish to load through the resource
+  system.  The CustomSearchPath member of the ResourceManager::ModuleLoadParams
+  structure may optionally be used to establish the custom search path.
+
+- Users of the ResourceManager may now request that granny2 support not be
+  enabled, and may request that only core module resources be loaded, via the
+  new ResourceManager::ResManFlags options specified in the module load params
+  structure.
+
+Version 20100815-01
+-------------------
+
+- Significant improvements to the GffFileWriter class have been made,
+  including List editing APIs and a fix for compatibility with the NWN2
+  Toolset's GFF reader.
+
+- Added a just-in-time (JIT) compilation system for NWScript.  An initial JIT
+  backend that emits MSIL (requires the .NET Framework) is included.  The JIT
+  backend must be built with Visual Studio and not the WDK.
+
+- Added a static analysis package for NWScript to the NWNScriptLib
+  (NWScriptAnalyzer).  Credit goes to Justin Olbrantz for significant work on
+  the code analysis / IR raising phase of the NWScriptAnalyzer.
+
+- Added NWScript action data tables for NWN2 1.23 and NWN1 1.69.
+
+- Users of NWScriptVM can now provide data table pointers for action handlers
+  implemented by the script host.  If provided, the data tables can be used to
+  enable static analysis to determine the real argument counts for
+  parameterized scripts.
+
+- Fixed a bug where empty strings were not properly converted to OBJECT_INVALID
+  correctly when passed as dynamic parameters and interpreted as type object.
+
+- Added support for indirecting through a standalone program (Gr2Conv.exe) to
+  Granny2Lib.  This enables non-x86 builds to decompress *.gr2 files.
+
+- Fixed alignment faults on ia64 builds in Granny2Lib.
+
+Version 20100621-01
+-------------------
+
+- A standalone NWScript host applet (NWNScriptConsole) has been added.  This
+  program demonstrates how to use NWNScriptLib in order to run a script.
+
+- Various improvements to the GffFileReader and GffFileWriter have been added
+  in order to better support online editing.
+
+
+Version 20100612-01
+-------------------
+
+- A writer for generic file format (GFF) files has been added.  This writer is
+  accessible by creating a GffFileWriter object.  GFF contents can be created
+  on the fly, or initialized from a GffFileReader.
+
+- The ErfFileReader was returning incorrect data if the same file logical
+  handle was read from multiple times in a row.  This has been corrected.
+
+- NWScriptVM::ExecuteScript now takes an additional default parameter, the
+  DefaultReturnCode, which is the return value of NWScriptVM::ExecuteScript
+  should script execution fail (or should the script not return a value).
+
+  Previously, the return code in these cases was always zero.
+
+- NWScriptVM::ExecuteScript now takes a flags parameter.  This allows extended
+  control over the script VM's behavior.
+
+- The implementation of the CPDOWNSP NWScript instruction was not properly
+  masking off SET_ENGINE_STRUCTURE when checking for dynamic typed parameters.
+  This has been fixed.
+
+- There was a typo in CPDOWNSP's implementation that interfered with string
+  copies.  This has been fixed.
+
+- There was a bug in CPDOWNSP that prevented engine structures from being
+  correctly copied.  This has been fixed.
+
+- The script VM debugger now prints the contents of a string on the stack in
+  addition to the string handle.
+
+- Script parameters were not being correctly passed to parameterized scripts
+  that did not return a value and did not use global variables.  This has been
+  fixed.
+
+- Parameterized scripts that modified their parameters with CPDOWNSP were not
+  being permitted to do so.  This has been fixed.
+
+- LOGANDII/LOGORII were not always correctly removing the right number of
+  values from the stack.  This has been fixed.
+
+- Nested script calls within the same script VM stack were not returning
+  properly.  This has been fixed.
+
+- The executed instruction count was not being reset when unwinding through the
+  outermost call to NWScriptVM::ExecuteScriptInternal.  This has been fixed.
+
+
+Version 20100528-01
+-------------------
+
+- The GffFileReader was not properly handling CExoLocStrings that contained
+  only a STRREf and no other data.  This has been fixed.
+
+- The NWNScriptLib, a complete virtual machine for the core language features
+  implemented in the compiled NWScript instruction set (*.ncs), has been added
+  to the project distribution.
+
+
+Version 20100522-01
+-------------------
+
+- Builds for amd64 (64-bit) are now fully supported.
+
+- Various warnings fixed for amd64 (64-bit) build.  Note that the 64-bit build
+  requires a 64-bit version of granny2.dll (which NWN2 does not ship with) in
+  order to load *.gr2 files.
+
+- SRT matrix decomposition routine added to math library.
+
+- AreaSurfaceMesh::StraightPathExists now optionally returns the face that the
+  straight path search terminated at (i.e. as far as we got in a straight line
+  before we ran into something).
+
+
+Version 20100515-01
+-------------------
+
+- Generic File Format (GFF) files are now supported by the datafile accessor
+  system.  The GffFileReader object allows validating parsing of these data
+  structures.
+
+- The 2DA file reader is now compatible with broken 2DA files missing the first
+  blank line after the header (such as creaturespeed.2da).
+
+- More verbose 2DA load failure debugging is now available.
+
+- MeshManager abstraction added.  The MeshManager and MeshLinkage support logic
+  allows easy typed access to all meshes instantiated by a particular instance
+  of a ResourceManager.  They are intended to allow data (such as hardware-
+  defined resources) to be attached to each mesh, and to be easily retrieved or
+  updated.
+
+- All mesh objects (including the AreaSurfaceMesh) will now register themselves
+  with the MeshManager through an embedded MeshLinkage object.
+
+- The TrxFileReader can now be configured to skip loading of display meshes for
+  .trx and .mdb files.
+
+- New resource type mappings added for ERF files.
+
+- Support for partial module resource loads has been added to the resource
+  manager system.
+
+- DemandResource-based template classes now behave correctly when copied.
+
+- Fixed incorrect case sensitivity for file extensions when the resource system
+  is loading data from raw directories via the DirectoryFileReader.
+
+
+Version 20100320-01
+-------------------
+
+Initial release.
