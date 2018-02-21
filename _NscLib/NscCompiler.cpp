@@ -309,7 +309,7 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	//
 
 
-	if (!pCompiler ->GetStrictModeEnabled ())  // Note, the current (last) stock compiler has the bug
+	if (pCompiler ->GetStrictModeEnabled ())  // Note, the current (last) stock compiler has the bug
 	{
 		sCtx .SetWarnAllowDefaultInitializedConstants (true);
 		sCtx .SetWarnAllowMismatchedPrototypes (true);

@@ -1792,7 +1792,7 @@ Environment:
                         "  -p - Dump internal PCode for compiled script contributions.\n"
                         "  -q - Silence most messages.\n"
                         "  -r - Filename for output file.\n"
-                        "  -s - Enable Strict mode. This disables stock compiler compatibility that allows\n"
+                        "  -s - Enable Strict mode. This enables stock compiler compatibility that allows\n"
                         "       some potentially unsafe conditions. (default: off)\n"
                         "  -v - Version info and Detailed Usage.\n"
                         "  -y - Continue processing input files even on error.\n\n"
