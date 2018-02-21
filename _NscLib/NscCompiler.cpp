@@ -572,7 +572,7 @@ NscCompiler::NscCompiler (
   m_ResLoadContext (NULL),
   m_ResLoadFile (NULL),
   m_ResUnloadFile (NULL),
-  m_CacheResources (false),
+  m_CacheResources (true),
   m_ErrorOutput (NULL)
 {
 	m_CompilerState ->m_fSaveSymbolTable = SaveSymbolTable;
@@ -1214,7 +1214,7 @@ NscCompiler::LoadResource (
 
 	if (m_CacheResources)
 	{
-		ResourceCacheKey CacheKey;
+        ResourceCacheKey CacheKey;
 
 		CacheKey .ResRef  = ResRef;
 		CacheKey .ResType = (NWN::ResType) nResType;
