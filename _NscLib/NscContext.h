@@ -47,13 +47,7 @@
 //
 //-----------------------------------------------------------------------------
 
-//#include <unordered_map>
-//#include <stack>
-//#include <cassert>
-//#include <vector>
 #include "../_NwnDataLib/NWNDataLib.h"
-
-//#include "../_NwnDataLib/TextOut.h"
 #include "NwnStreams.h"
 #include "NwnArray.h"
 #include "NscPStackEntry.h"

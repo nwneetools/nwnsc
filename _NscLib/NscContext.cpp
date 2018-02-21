@@ -41,8 +41,7 @@
 #include "Precomp.h"
 #include "Nsc.h"
 #include "NscContext.h"
-//#include "NscPStackEntry.h"
-//#include "NscSymbolTable.h"
+
 
 //
 // Externals
