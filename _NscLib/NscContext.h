@@ -1560,30 +1560,32 @@ protected:
             
 //          printf ("\n");
 #else
-            char *prefix,*error;
+            char *prefix,*error,*message;
             if (m_pStreamTop == NULL)
                 asprintf (&prefix,"%s: ", pszType);
             else
             {
-                asprintf (&prefix,"%s(%d): %s: ", 
+                asprintf (&prefix,"%s(%d): %s: ",
                           m_pStreamTop ->pStream ->GetFileName (), 
                           m_pStreamTop ->nLine, pszType);
             }
-            printf(prefix);
+            //printf(prefix);
             
-            vasprintf (&error,pszText, marker);
-            printf(error);
+            vasprintf (&error, pszText, marker);
+			asprintf(&message,"%s%s",prefix,error);
+            //printf(error);
             
             if (m_pErrorStream)
             {
-                m_pErrorStream->WriteText(prefix,strlen(prefix));
-                m_pErrorStream->WriteText(error,strlen(error));
+                //m_pErrorStream->WriteText(prefix,strlen(prefix));
+                m_pErrorStream->WriteText(message,strlen(message));
                 m_pErrorStream->WriteText("\n",1);
             }
             
-            printf ("\n");
+            //printf ("\n");
             free(prefix);
             free(error);
+            free(message);
 #endif
 	}
 
