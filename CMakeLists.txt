@@ -24,8 +24,8 @@ string(REGEX REPLACE "^v[0-9]+\\.[0-9]+\\.[0-9]+(.*)" "\\1" VERSION_SHA1 "${VERS
 set(VERSION_SHORT "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/version.cpp.in
-		${CMAKE_CURRENT_BINARY_DIR}/_NwnUtilLib/version.cpp)
-set(version_file "${CMAKE_CURRENT_BINARY_DIR}/_NwnUtilLib/version.cpp")
+		${CMAKE_CURRENT_SOURCE_DIR}/_NwnUtilLib/version.cpp)
+set(version_file "${CMAKE_CURRENT_SOURCE_DIR}/_NwnUtilLib/version.cpp")
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH 1)
