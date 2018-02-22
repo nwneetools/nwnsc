@@ -36,6 +36,7 @@ Abstract:
 
 #if defined(__linux__) || defined(__APPLE__)
 #include <libgen.h>
+#include <chrono>
 #endif
 
 typedef std::vector<std::string> StringVec;
@@ -1488,11 +1489,13 @@ Environment:
     unsigned long Errors = 0;
     unsigned long Flags = NscDFlag_StopOnError;
     UINT32 CompilerFlags = 0;
-    ULONG StartTime;
 
 #if defined(_WINDOWS)
-    StartTime = GetTickCount( );
+    ULONG StartTime = GetTickCount( );
+#else
+    std::chrono::high_resolution_clock::time_point StartTime = std::chrono::high_resolution_clock::now();
 #endif
+
     SearchPaths.push_back(".");
 
     do {
@@ -1989,6 +1992,14 @@ Environment:
         printf(
             "Total Execution time = %lums\n",
             GetTickCount( ) - StartTime);
+    }
+#else
+    std::chrono::high_resolution_clock::time_point EndTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( EndTime - StartTime ).count();
+    double durationFloat = (float)duration / (float)1000;
+    if (!Quiet)
+    {
+        printf("Total Execution time = %.4f seconds  \n",durationFloat);
     }
 #endif
 
