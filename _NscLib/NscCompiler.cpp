@@ -1255,10 +1255,9 @@ NscCompiler::LoadResource (
 
 			if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
 			{
-				printf ("ShowIncludes: Handled resource %s/%s.%s\n",
+				m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s/%s.%s\n",
                         it ->c_str (),
-                        pszName,
-					   m_ResourceManager .ResTypeToExt (nResType));
+                        pszName, m_ResourceManager .ResTypeToExt (nResType));
 			}
 
 			//
@@ -1329,7 +1328,7 @@ NscCompiler::LoadResource (
 
 		if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
 		{
-			printf ("ShowIncludes: Handled resource %s.%s from ResLoadFile.\n",
+			m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s.%s from ResLoadFile.\n",
 				pszName,
 				m_ResourceManager .ResTypeToExt (nResType));
 		}
@@ -1421,7 +1420,7 @@ NscCompiler::LoadResource (
 			std::string AccessorName;
 
 			m_ResourceManager .GetResourceAccessorName (Handle, AccessorName);
-			printf ("ShowIncludes: Handled resource %s/%s.%s\n",
+			m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s/%s.%s\n",
 					AccessorName .c_str (),
 					pszName,
 					m_ResourceManager .ResTypeToExt (nResType));

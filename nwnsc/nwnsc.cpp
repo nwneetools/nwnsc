@@ -106,7 +106,7 @@ public:
         Attributes - Supplies color attributes for the text as per the standard
                      SetConsoleTextAttribute API (e.g. FOREGROUND_RED).
 
-        fmt - Supplies the printf-style format string to use to display text.
+        fmt - Supplies the g_TextOut.WriteText-style format string to use to display text.
 
         argptr - Supplies format inserts.
 
@@ -1425,7 +1425,7 @@ Environment:
             f = nullptr;
         }
 
-        printf(
+        g_TextOut.WriteText(
                 "Error: Exception parsing response file '%s': '%s'.\n",
                 ResponseFileName,
                 e.what());
@@ -1525,7 +1525,7 @@ Environment:
 
                         case 'b': {
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1562,7 +1562,7 @@ Environment:
 
                         case 'h': {
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1587,7 +1587,7 @@ Environment:
                             std::string Ansi;
 
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1616,7 +1616,7 @@ Environment:
 
                         case 'n': {
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1650,7 +1650,7 @@ Environment:
                                     // Permitted, but ignored.
                                     //
                                 } else {
-                                    printf(
+                                    g_TextOut.WriteText(
                                             "Error: Invalid digit in version number.\n");
                                     Error = true;
                                     break;
@@ -1673,7 +1673,7 @@ Environment:
 
                         case 'r': {
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1694,7 +1694,7 @@ Environment:
 
                         case 'x': {
                             if (i + 1 >= argc) {
-                                printf("Error: Malformed arguments.\n");
+                                g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
                                 break;
                             }
@@ -1710,7 +1710,7 @@ Environment:
                             break;
 
                         default: {
-                            printf("Error: Unrecognized option \"%c\".\n", Switch);
+                            g_TextOut.WriteText("Error: Unrecognized option \"%c\".\n", Switch);
                             Error = true;
                         }
                             break;
@@ -1719,7 +1719,7 @@ Environment:
                 }
             } else if (argv[i][0] == '@') {
                 if (ResponseFile) {
-                    printf("Error: Nested response files are unsupported.\n");
+                    g_TextOut.WriteText("Error: Nested response files are unsupported.\n");
                     Error = true;
                     break;
                 }
@@ -1775,7 +1775,7 @@ Environment:
 
 
     if ((Version) || (Error) || (InFiles.empty())) {
-        printf(
+        g_TextOut.WriteText(
                 "\nUsage:\n"
                         "nwnsc [-adegjklorsqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
@@ -1801,7 +1801,7 @@ Environment:
                         "  -y - Continue processing input files even on error.\n\n"
         );
         if (Version) {
-            printf(
+            g_TextOut.WriteText(
 			"nwnsc version %s - built %s %s\n\n"
             "  Portions Copyright (C) 2008-2015 Skywing.\n"
 			"  Portions copyright (C) 2002-2003, Edward T. Smith.\n"
@@ -1824,7 +1824,7 @@ Environment:
         g_ResMan = new ResourceManager(&g_TextOut);
     }
     catch (std::runtime_error &e) {
-        printf(
+        g_TextOut.WriteText(
                 "Failed to initialize resource manager: '%s'\n",
                 e.what());
 
@@ -1843,7 +1843,7 @@ Environment:
 
 //		if (!Quiet)
 //		{
-//            printf("Loading base game resources...\n");
+//            g_TextOut.WriteText("Loading base game resources...\n");
 //		}
 
         if (InstallDir.empty()) {
@@ -1937,7 +1937,7 @@ Environment:
                     nullptr,
                     0))
                 {
-                    printf(
+                    g_TextOut.WriteText(
                         "Error: Invalid path: \"%s\".\n",
                         it->c_str( ));
 
@@ -1980,7 +1980,7 @@ Environment:
             Errors += 1;
 
             if (Flags & NscDFlag_StopOnError) {
-                printf("Processing aborted.\n");
+                g_TextOut.WriteText("Processing aborted.\n");
                 break;
             }
         }
@@ -1989,7 +1989,7 @@ Environment:
 #if defined(_WINDOWS)
     if (!Quiet)
     {
-        printf(
+        g_TextOut.WriteText(
             "Total Execution time = %lums\n",
             GetTickCount( ) - StartTime);
     }
@@ -1999,12 +1999,12 @@ Environment:
     double durationFloat = (float)duration / (float)1000;
     if (!Quiet)
     {
-        printf("Total Execution time = %.4f seconds  \n",durationFloat);
+        g_TextOut.WriteText("Total Execution time = %.4f seconds  \n",durationFloat);
     }
 #endif
 
     if (Errors > 1)
-        printf("%lu error(s) processing input files.\n", Errors);
+        g_TextOut.WriteText("%lu error(s) processing input files.\n", Errors);
 
     if (g_Log != nullptr) {
         fclose(g_Log);
