@@ -1777,7 +1777,7 @@ Environment:
     if ((Version) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
                 "\nUsage:\n"
-                        "nwnsc [-adegjklorsqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
+                        "nwnsc [-degjklorsqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  batchoutdir - Supplies the location where batch mode places output files\n"
                         "  homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights).\n"
