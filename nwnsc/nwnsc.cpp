@@ -1989,9 +1989,10 @@ Environment:
 #if defined(_WINDOWS)
     if (!Quiet)
     {
+		double durationFloat = (float)(GetTickCount() - StartTime) / (float)1000;
         g_TextOut.WriteText(
-            "Total Execution time = %lums\n",
-            GetTickCount( ) - StartTime);
+            "Total Execution time = %.4f seconds\n",
+			durationFloat);
     }
 #else
     std::chrono::high_resolution_clock::time_point EndTime = std::chrono::high_resolution_clock::now();
