@@ -1436,7 +1436,7 @@ NscCompiler::LoadResource (
 	{
 		std::string AccessorName;
 		m_ResourceManager.GetResourceAccessorName(Handle, AccessorName);
-		res = AccessorName + "/" + pszName + "###." + m_ResourceManager.ResTypeToExt(nResType);
+		res = AccessorName + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
 	}
 	catch (std::exception) {}
 
