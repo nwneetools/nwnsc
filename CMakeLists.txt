@@ -39,7 +39,7 @@ endif (NOT BISON_FOUND)
 
 if (UNIX OR APPLE)
 	#set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11")
-	set(CMAKE_CXX_FLAGS " -w -g -O2 -m32 -Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11")
+	set(CMAKE_CXX_FLAGS " -g -w -O2 -m32 -std=c++11")
 	#set(CMAKE_CXX_FLAGS "-g -w -m32 -std=c++11")
 	#set(CMAKE_CXX_FLAGS "-w /EHsc")
 endif()
