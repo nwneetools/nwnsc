@@ -3,6 +3,7 @@
 
 #include "Precomp.h"
 #include "OsCompat.h"
+#include "../_NwnUtilLib/easylogging++.h"
 
 #ifdef _MSC_VER
 #pragma once
@@ -22,10 +23,12 @@ namespace swutil
 		 LONG_PTR volatile * Addend
 		)
 	{
-#ifdef _WINDOWS
+#ifdef _WIN64
+        return InterlockedIncrement64( Addened );
+#elseif _WIN32
 		return InterlockedIncrement( Addend );
 #else
-		__sync_add_and_fetch(Addend,1);
+		return __sync_add_and_fetch(Addend,1);
 #endif
 	}
 
@@ -35,10 +38,12 @@ namespace swutil
 		 LONG_PTR volatile * Addend
 		)
 	{
-#ifdef _WINDOWS
-		return InterlockedIncrement( Addend );
+#ifdef _WIN64
+        return InterlockedDecrement64( Addened );
+#elseif _WIN32
+		return InterlockedDecrement( Addend );
 #else
-		__sync_add_and_fetch(Addend,1);
+		return __sync_sub_and_fetch(Addend,1);
 #endif
 	}
 

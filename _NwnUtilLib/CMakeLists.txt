@@ -1,5 +1,6 @@
 add_library(nwnutillib
         BufferParser
+        easylogging++
         findfirst
         NWNUtilLib
         OsCompat

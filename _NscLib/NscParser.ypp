@@ -664,7 +664,7 @@ expression_statement:
 			while (YYCHAR_NAME != EOF && YYCHAR_NAME != ';' && YYCHAR_NAME != '{' && YYCHAR_NAME != '}')
 			{
 				if (YYLVAL != NULL)
-					YYLVAL; //FIXME
+					YYLVAL;
 				YYCHAR_NAME = YYEMPTY;
 				YYCHAR_NAME = yylex (&YYLVAL, context);
 			}
@@ -991,7 +991,7 @@ translation_unit:
 			while (YYCHAR_NAME != EOF && YYCHAR_NAME != ';' && YYCHAR_NAME != '{' && YYCHAR_NAME != '}')
 			{
 				if (YYLVAL != NULL)
-					YYLVAL; //FIXME
+					YYLVAL;
 				YYCHAR_NAME = YYEMPTY;
 				YYCHAR_NAME = yylex (&YYLVAL, context);
 			}
