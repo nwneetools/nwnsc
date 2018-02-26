@@ -265,7 +265,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 	//
 	// Test to see if we should create a global routine
 	//
-	// FIXME: NDB - If there exists a structure definitions, we 
+	//  NDB - If there exists a structure definitions, we
 	//		must create the #global routine to attached the structure
 	//		elements to the #global routine.
 	//

@@ -39,6 +39,10 @@ Abstract:
 #include <chrono>
 #endif
 
+#include "../_NwnUtilLib/easylogging++.h"
+
+INITIALIZE_EASYLOGGINGPP
+
 typedef std::vector<std::string> StringVec;
 typedef std::vector<const char *> StringArgVec;
 
@@ -1489,6 +1493,9 @@ Environment:
     unsigned long Errors = 0;
     unsigned long Flags = NscDFlag_StopOnError;
     UINT32 CompilerFlags = 0;
+
+    START_EASYLOGGINGPP(argc, argv);
+    LOG(INFO) << "My first info log using default logger";
 
 #if defined(_WINDOWS)
     ULONG StartTime = GetTickCount( );

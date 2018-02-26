@@ -3,6 +3,7 @@ project(nwnsc)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
 if(NOT CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 11)
     set(CMAKE_CXX_STANDARD 11)
 endif()
@@ -38,7 +39,7 @@ endif (NOT BISON_FOUND)
 
 if (UNIX OR APPLE)
 	#set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11")
-	set(CMAKE_CXX_FLAGS " -w -O2 -m32 -std=c++11")
+	set(CMAKE_CXX_FLAGS " -w -g -O2 -m32 -Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11")
 	#set(CMAKE_CXX_FLAGS "-g -w -m32 -std=c++11")
 	#set(CMAKE_CXX_FLAGS "-w /EHsc")
 endif()

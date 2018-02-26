@@ -619,7 +619,7 @@ protected:
 	int						m_nLine;
 #endif
 
-	friend class CNscContext; //FIXME
+	friend class CNscContext;
 };
 
 #endif // ETS_NSCPSTACKENTRY_H
