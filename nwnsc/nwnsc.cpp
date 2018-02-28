@@ -671,6 +671,7 @@ Environment:
 {
     std::vector<unsigned char> Code;
     std::vector<unsigned char> Symbols;
+    std::set<std::string> Dependencies;
     NscResult Result;
     std::string FileName;
     FILE *f;
@@ -697,7 +698,8 @@ Environment:
             TextOut,
             CompilerFlags,
             Code,
-            Symbols);
+            Symbols,
+            Dependencies);
 
     switch (Result) {
 
@@ -787,6 +789,36 @@ Environment:
         fclose(f);
     }
 
+    if (CompilerFlags & NscCompilerFlag_GenerateMakeDeps) {
+        FileName = OutBaseFile;
+        FileName += ".d";
+
+        f = fopen(FileName.c_str(), "w");
+
+        if (f == nullptr) {
+            TextOut->WriteText(
+                    "Error: Failed to open dependency file %s.\n",
+                    FileName.c_str());
+
+            return false;
+        }
+
+        if (!Dependencies.empty()) {
+            // NCS primarily depends on the NSS
+            fprintf(f, "%s.ncs: %s.nss ", OutBaseFile.c_str(), OutBaseFile.c_str());
+
+            // Print all other dependencies
+            for (auto& dep : Dependencies)
+                fprintf(f, " \\\n    %s", dep.c_str());
+
+            // Create phony rules for dependencies, so deleting them doesn't
+            // require deleting all .d files as well.
+            for (auto& dep : Dependencies)
+                fprintf(f, "\n%s:\n", dep.c_str());
+        }
+
+        fclose(f);
+    }
     return true;
 }
 
@@ -1536,7 +1568,7 @@ Environment:
                 while ((*Switches != '\0') && (!Error)) {
                     Switch = *Switches++;
 
-                    switch (towlower((wint_t) (unsigned) Switch)) {
+                    switch ((wint_t) (unsigned) Switch) {
 
                         case 'a':
                             VerifyCode = true;
@@ -1750,6 +1782,10 @@ Environment:
                             Flags &= ~(NscDFlag_StopOnError);
                             break;
 
+                        case 'M':
+                            CompilerFlags |= NscCompilerFlag_GenerateMakeDeps;
+                            break;
+
                         default: {
                             g_TextOut.WriteText("Error: Unrecognized option \"%c\".\n", Switch);
                             Error = true;
@@ -1818,7 +1854,7 @@ Environment:
     if ((Usage) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
                 "\nUsage: version %s - built %s %s\n\n"
-                        "nwnsc [-degjkorsqvyL] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
+                        "nwnsc [-degjkorsqvyM] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  -b batchoutdir - Supplies the location where batch mode places output files\n"
                         "  -h homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights)\n"
@@ -1838,10 +1874,12 @@ Environment:
                         "  -s - Enable Strict mode. This enables stock compiler compatibility that allows\n"
                         "       some potentially unsafe conditions (default: off)\n"
                         "  -v - Version and detailed usage message\n"
-                        "  -y - Continue processing input files even on error\n\n",
+                        "  -y - Continue processing input files even on error\n"
+                        "  -M - Create makefile dependency (.d) files\n\n",
                 gGIT_VERSION_SHORT.c_str(),
                 __DATE__,
                 __TIME__
+
         );
         if (Usage) {
 //            g_TextOut.WriteText(

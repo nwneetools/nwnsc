@@ -51,7 +51,7 @@
 #include "NwnDefines.h"
 #include "NwnStreams.h"
 #include "NwnLoader.h"
-
+#include <set>
 //-----------------------------------------------------------------------------
 //
 // Forward definitions
@@ -144,6 +144,7 @@ enum NscCompilerFlags
 	NscCompilerFlag_ShowIncludes		= 0x00000002,
 	NscCompilerFlag_ShowPreprocessed	= 0x00000004,
 	NscCompilerFlag_StrictModeEnabled	= 0x00000008,
+	NscCompilerFlag_GenerateMakeDeps	= 0x00000010,
 };
 
 //-----------------------------------------------------------------------------
@@ -965,7 +966,8 @@ public:
 		 IDebugTextOut * ErrorOutput,
 		 UINT32 CompilerFlags,
 		 std::vector< UINT8 > & Code,
-		 std::vector< UINT8 > & DebugSymbols
+		 std::vector< UINT8 > & DebugSymbols,
+		 std::set<std::string> & Dependencies
 		);
 
 	// @cmember Compile script from in-memory source text.
@@ -987,7 +989,8 @@ public:
 		 IDebugTextOut * ErrorOutput,
 		 UINT32 CompilerFlags,
 		 std::vector< UINT8 > & Code,
-		 std::vector< UINT8 > & DebugSymbols
+		 std::vector< UINT8 > & DebugSymbols,
+		 std::set<std::string> & Dependencies
 		);
 
 	// @cmember Disassemble script from in-memory instruction stream.
@@ -1216,6 +1219,7 @@ private:
 		bool                Allocated;
 		unsigned char     * Contents;
 		UINT32              Size;
+		std::string         Location;
 	};
 
 	typedef std::map< ResourceCacheKey, ResourceCacheEntry > ResourceCache;
@@ -1276,7 +1280,8 @@ private:
 		 UINT32 ResFileLength,
 		 bool Allocated,
 		 const NWN::ResRef32 & ResRef,
-		 NWN::ResType ResType
+		 NWN::ResType ResType,
+		 const std::string & sLocation
 		);
 
 	// @cmember Flush the resource cache.
@@ -1293,6 +1298,7 @@ private:
 	bool 						  m_StrictModeEnabled;
 	bool                          m_EnableExtensions;
 	bool                          m_ShowIncludes;
+	bool                          m_GenerateMakeDeps;
 	bool                          m_ShowPreprocessed;
 	bool                          m_Initialized;
 	bool                          m_NWScriptParsed;

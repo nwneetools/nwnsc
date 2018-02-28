@@ -51,6 +51,8 @@
 
 CNscContext *g_pCtx;
 
+std::set<std::string> g_Resources;
+
 //-----------------------------------------------------------------------------
 //
 // @func Add a token to the reserved words
@@ -617,6 +619,8 @@ NscCompiler::~NscCompiler ()
 // @parm std::vector< UINT8 > | DebugSymbols | Receives the symbolic debugging
 //                                             information.
 //
+// @parm std::set<std::string> | Dependencies | Receives the resources loaded
+//                                                  while compiling
 // @rdesc Result of the compilation.
 //
 //-----------------------------------------------------------------------------
@@ -630,7 +634,8 @@ NscCompiler::NscCompileScript (
 	 IDebugTextOut * ErrorOutput,
 	 UINT32 CompilerFlags,
 	 std::vector< UINT8 > & Code,
-	 std::vector< UINT8 > & DebugSymbols
+	 std::vector< UINT8 > & DebugSymbols,
+	 std::set<std::string> & Dependencies
 	)
 {
 	std::vector< UINT8 >        FileContents;
@@ -715,6 +720,7 @@ NscCompiler::NscCompileScript (
 	assert (m_ErrorOutput == NULL);
 	m_ErrorOutput = ErrorOutput;
 	m_ShowIncludes = (CompilerFlags & NscCompilerFlag_ShowIncludes) != 0;
+	m_GenerateMakeDeps = (CompilerFlags & NscCompilerFlag_GenerateMakeDeps) != 0;
 	m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
 	m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
 
@@ -727,10 +733,12 @@ NscCompiler::NscCompileScript (
 		ErrorOutput,
 		CompilerFlags,
 		Code,
-		DebugSymbols);
+		DebugSymbols,
+		Dependencies);
 
 	m_ErrorOutput = NULL;
 	m_ShowIncludes = false;
+	m_GenerateMakeDeps = false;
 	m_ShowPreprocessed = false;
     m_StrictModeEnabled = false;
 
@@ -767,6 +775,8 @@ NscCompiler::NscCompileScript (
 // @parm std::vector< UINT8 > | DebugSymbols | Receives the symbolic debugging
 //                                             information.
 //
+// @parm std::set<std::string> | Dependencies | Receives the resources loaded
+//                                                  while compiling
 // @rdesc Result of the compilation.
 //
 //-----------------------------------------------------------------------------
@@ -782,11 +792,14 @@ NscCompiler::NscCompileScript (
 	 IDebugTextOut * ErrorOutput,
 	 UINT32 CompilerFlags,
 	 std::vector< UINT8 > & Code,
-	 std::vector< UINT8 > & DebugSymbols
+	 std::vector< UINT8 > & DebugSymbols,
+	 std::set<std::string> & Dependencies
 	)
 {
 	Code.clear ();
 	DebugSymbols.clear ();
+	Dependencies.clear ();
+	g_Resources.clear ();
 
 	//
 	// If we haven't yet initialized the compiler, do so now.
@@ -818,6 +831,7 @@ NscCompiler::NscCompileScript (
 		assert (m_ErrorOutput == NULL);
 		m_ErrorOutput = ErrorOutput;
 		m_ShowIncludes = (CompilerFlags & NscCompilerFlag_ShowIncludes) != 0;
+		m_GenerateMakeDeps = (CompilerFlags & NscCompilerFlag_GenerateMakeDeps) != 0;
 		m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
 		m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
 
@@ -841,6 +855,7 @@ NscCompiler::NscCompileScript (
 
 		m_ErrorOutput = NULL;
 		m_ShowIncludes = false;
+		m_GenerateMakeDeps = false;
 		m_ShowPreprocessed = false;
         m_StrictModeEnabled = false;
 
@@ -877,6 +892,8 @@ NscCompiler::NscCompileScript (
 
 		if (NscGetCompilerState () ->m_fSaveSymbolTable)
 			m_SymbolTableReady = true;
+
+		Dependencies = std::move(g_Resources);
 
 		return Result;
 	}
@@ -1226,6 +1243,7 @@ NscCompiler::LoadResource (
 		{
 			*pulSize     = it ->second .Size;
 			*pfAllocated = false;
+			g_Resources.insert(it->second.Location);
 			return it ->second .Contents;
 		}
 	}
@@ -1256,15 +1274,17 @@ NscCompiler::LoadResource (
 
 		if (FileContents != NULL)
 		{
+			std::string res = *it + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
 			*pfAllocated = true;
 
 			if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
 			{
-				m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s/%s.%s\n",
-                        it ->c_str (),
-                        pszName, m_ResourceManager .ResTypeToExt (nResType));
+				m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s\n", res.c_str());
 			}
-
+			if (m_GenerateMakeDeps)
+			{
+				g_Resources.insert(res);
+			}
 			//
 			// Try to cache the resource for next time around.
 			//
@@ -1273,7 +1293,8 @@ NscCompiler::LoadResource (
 				*pulSize,
 				*pfAllocated,
 				ResRef,
-				(NWN::ResType) nResType))
+				(NWN::ResType) nResType,
+				res))
 			{
 				*pfAllocated = false;
 			}
@@ -1350,7 +1371,8 @@ NscCompiler::LoadResource (
 			*pulSize,
 			*pfAllocated,
 			ResRef,
-			(NWN::ResType) nResType))
+			(NWN::ResType) nResType,
+			""))
 		{
 			*pfAllocated = false;
 		}
@@ -1416,27 +1438,27 @@ NscCompiler::LoadResource (
 		return NULL;
 	}
 
+	std::string res = "";
+	try
+	{
+		std::string AccessorName;
+		m_ResourceManager.GetResourceAccessorName(Handle, AccessorName);
+		res = AccessorName + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
+	}
+	catch (std::exception) {}
+
 	if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
 	{
 		//
 		// Print information about included files to the console.
 		//
-
-		try
-		{
-			std::string AccessorName;
-
-			m_ResourceManager .GetResourceAccessorName (Handle, AccessorName);
-			m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s/%s.%s\n",
-					AccessorName .c_str (),
-					pszName,
-					m_ResourceManager .ResTypeToExt (nResType));
-		}
-		catch (std::exception)
-		{
-		}
+		m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s\n", res.c_str());
 	}
 
+	if (m_GenerateMakeDeps)
+	{
+		g_Resources.insert(res);
+	}
 	//
 	// Close the file out and we're done.
 	//
@@ -1451,7 +1473,8 @@ NscCompiler::LoadResource (
 		*pulSize,
 		*pfAllocated,
 		ResRef,
-		(NWN::ResType) nResType))
+		(NWN::ResType) nResType,
+		res))
 	{
 		*pfAllocated = false;
 	}
@@ -1669,6 +1692,8 @@ NscCompiler::NscGatherPrototypeFromSymbol (
 //
 // @parm const NWN::ResType | ResType | ResType for the resource
 //
+// @parm const std::string & | sLocation | Where the resource was loaded from
+//
 // @rdesc True if the cache now owns the memory for the resource.
 //
 //-----------------------------------------------------------------------------
@@ -1679,7 +1704,8 @@ NscCompiler::NscCacheResource (
 	 UINT32 ResFileLength,
 	 bool Allocated,
 	 const NWN::ResRef32 & ResRef,
-	 NWN::ResType ResType
+	 NWN::ResType ResType,
+	 const std::string & sLocation
 	)
 {
 	if (!m_CacheResources)
@@ -1697,6 +1723,7 @@ NscCompiler::NscCacheResource (
 		Entry .Allocated = Allocated;
 		Entry .Contents  = ResFileContents;
 		Entry .Size      = ResFileLength;
+		Entry .Location  = sLocation;
 
 		Inserted = m_ResourceCache .insert (ResourceCache::value_type (Key, Entry)) .second;
 
