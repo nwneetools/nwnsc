@@ -43,6 +43,7 @@
 #include "NscContext.h"
 #include "NscCodeGenerator.h"
 #include "NscIntrinsicDefs.h"
+#include "../_NwnUtilLib/easylogging++.h"
 
 //
 // Globals
@@ -1233,6 +1234,8 @@ NscCompiler::LoadResource (
 	// Try additional search paths as the highest priority.
 	//
 
+//    LOG(DEBUG) << "Checking include paths";
+
 	for (std::vector< std::string >::const_iterator it = m_IncludePaths .begin ();
 		  it != m_IncludePaths .end ();
 		  ++it)
@@ -1246,6 +1249,8 @@ NscCompiler::LoadResource (
 		Str += pszName;
 		Str += ".";
 		Str += m_ResourceManager .ResTypeToExt (nResType);
+
+//        LOG(DEBUG) << "Loaded Script " << Str;
 
 		FileContents = LoadFileFromDisk (Str .c_str (), pulSize);
 
@@ -1281,7 +1286,9 @@ NscCompiler::LoadResource (
 	// Open the file up via the resource system.
 	//
 
-	Handle = m_ResourceManager .OpenFile (ResRef, nResType);
+//    LOG(DEBUG) << "Checking resource paths";
+
+    Handle = m_ResourceManager .OpenFile (ResRef, nResType);
 
 	if (Handle == ResourceManager::INVALID_FILE)
 	{
