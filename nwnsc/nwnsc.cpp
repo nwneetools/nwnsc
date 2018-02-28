@@ -1526,20 +1526,24 @@ Environment:
     unsigned long Errors = 0;
     unsigned long Flags = NscDFlag_StopOnError;
     UINT32 CompilerFlags = 0;
+//    bool logInfo = false;
+//    bool logWarn = false;
+//    bool logDebug = false;
+//    bool logTrace = false;
 
-//    el::Configurations defaultConf;
-//    defaultConf.setToDefault();
-//    defaultConf.set(el::Level::Info,
-//                    el::ConfigurationType::Enabled, "false");
-//    defaultConf.set(el::Level::Warning,
-//                    el::ConfigurationType::Enabled, "false");
+    el::Configurations defaultConf;
+    defaultConf.setToDefault();
+    defaultConf.set(el::Level::Info,
+                    el::ConfigurationType::Enabled, "false");
+    defaultConf.set(el::Level::Warning,
+                    el::ConfigurationType::Enabled, "false");
 //    defaultConf.set(el::Level::Verbose,
 //                    el::ConfigurationType::Enabled, "false");
-//    defaultConf.set(el::Level::Debug,
-//                    el::ConfigurationType::Enabled, "false");
-//    defaultConf.set(el::Level::Trace,
-//                    el::ConfigurationType::Enabled, "false");
-//    el::Loggers::addFlag(el::LoggingFlag ::LogDetailedCrashReason);
+    defaultConf.set(el::Level::Debug,
+                    el::ConfigurationType::Enabled, "false");
+    defaultConf.set(el::Level::Trace,
+                    el::ConfigurationType::Enabled, "false");
+    el::Loggers::addFlag(el::LoggingFlag ::LogDetailedCrashReason);
 
 #if defined(_WINDOWS)
     ULONG StartTime = GetTickCount( );
@@ -1556,7 +1560,7 @@ Environment:
 
         for (int i = 1; i < argc && !Error; i += 1) {
             //
-            // If it's a switch, consume it.  Otherwise it is an ipnut file.
+            // If it's a switch, consume it.  Otherwise it is an input file.
             //
 
             if (argv[i][0] == '-') {
@@ -1653,30 +1657,25 @@ Environment:
                         }
                             break;
 
-//                        case 'D':
-//                            defaultConf.set(el::Level::Debug,
-//                                            el::ConfigurationType::Enabled, "true");
-//                            break;
-//
-//                        case 'I':
-//                            defaultConf.set(el::Level::Info,
-//                                            el::ConfigurationType::Enabled, "true");
-//                            break;
-//
-//                        case 'V':
-//                            defaultConf.set(el::Level::Verbose,
-//                                            el::ConfigurationType::Enabled, "true");
-//                            break;
-//
-//                        case 'W':
-//                            defaultConf.set(el::Level::Warning,
-//                                            el::ConfigurationType::Enabled, "true");
-//                            break;
-//
-//                        case 'T':
-//                            defaultConf.set(el::Level::Trace,
-//                                            el::ConfigurationType::Enabled, "true");
-//                            break;
+                        case 'D':
+                            defaultConf.set(el::Level::Debug,
+                                            el::ConfigurationType::Enabled, "true");
+                            break;
+
+                        case 'I':
+                            defaultConf.set(el::Level::Info,
+                                            el::ConfigurationType::Enabled, "true");
+                            break;
+
+                        case 'W':
+                            defaultConf.set(el::Level::Warning,
+                                            el::ConfigurationType::Enabled, "true");
+                            break;
+
+                        case 'T':
+                            defaultConf.set(el::Level::Trace,
+                                            el::ConfigurationType::Enabled, "true");
+                            break;
 
                         case 'j':
                             CompilerFlags |= NscCompilerFlag_ShowIncludes;
@@ -1882,13 +1881,13 @@ Environment:
 
         );
         if (Usage) {
-//            g_TextOut.WriteText(
-//                    "Optional debug flags\n"
-//                     "  -D - Set Debug Log level\n"
-//                     "  -I - Set Info Log level\n"
-//                     "  -W - Set Warning Log level\n"
-//                     "  -T - Set Trace Log level\n"
-//            );
+            g_TextOut.WriteText(
+                    "Optional debug flags\n"
+                     "  -D - Set Debug Log level\n"
+                     "  -I - Set Info Log level\n"
+                     "  -W - Set Warning Log level\n"
+                     "  -T - Set Trace Log level\n"
+            );
 
             g_TextOut.WriteText("\n"
             "  Portions Copyright (C) 2008-2015 Skywing\n"
@@ -1900,7 +1899,7 @@ Environment:
         return -1;
     }
 
-//    el::Loggers::reconfigureLogger("default", defaultConf);
+    el::Loggers::reconfigureLogger("default", defaultConf);
 
     //
     // Create the resource manager context and load the module, if we are to

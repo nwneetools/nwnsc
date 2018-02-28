@@ -1252,7 +1252,7 @@ NscCompiler::LoadResource (
 	// Try additional search paths as the highest priority.
 	//
 
-//    LOG(DEBUG) << "Checking include paths";
+    LOG(DEBUG) << "Checking include paths";
 
 	for (std::vector< std::string >::const_iterator it = m_IncludePaths .begin ();
 		  it != m_IncludePaths .end ();
@@ -1260,21 +1260,23 @@ NscCompiler::LoadResource (
 	{
 		std::string Str (*it);
 #ifdef _WINDOWS
-		Str += "\\";
+        if (Str.back() != '\\')
+		    Str += "\\";
 #else
-		Str += "/";
+        if (Str.back() != '/')
+		    Str += "/";
 #endif
 		Str += pszName;
 		Str += ".";
 		Str += m_ResourceManager .ResTypeToExt (nResType);
 
-//        LOG(DEBUG) << "Loaded Script " << Str;
-
 		FileContents = LoadFileFromDisk (Str .c_str (), pulSize);
 
 		if (FileContents != NULL)
 		{
-			std::string res = *it + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
+            LOG(DEBUG) << "Loaded File " << Str;
+
+            std::string res = *it + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
 			*pfAllocated = true;
 
 			if ((m_ShowIncludes) && (m_ErrorOutput != NULL))
@@ -1307,7 +1309,7 @@ NscCompiler::LoadResource (
 	// Open the file up via the resource system.
 	//
 
-//    LOG(DEBUG) << "Checking resource paths";
+    LOG(DEBUG) << "Checking resource paths";
 
     Handle = m_ResourceManager .OpenFile (ResRef, nResType);
 
