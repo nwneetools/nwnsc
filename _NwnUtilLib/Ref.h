@@ -25,7 +25,7 @@ namespace swutil
 	{
 #ifdef _WIN64
         return InterlockedIncrement64( Addened );
-#elseif _WIN32
+#elif _WIN32
 		return InterlockedIncrement( Addend );
 #else
 //        LONG_PTR retval = __sync_add_and_fetch(Addend,1);
@@ -43,7 +43,7 @@ namespace swutil
 	{
 #ifdef _WIN64
         return InterlockedDecrement64( Addened );
-#elseif _WIN32
+#elif _WIN32
 		return InterlockedDecrement( Addend );
 #else
 //        LONG_PTR retval = __sync_sub_and_fetch(Addend,1);
