@@ -85,7 +85,7 @@ Environment:
 	//
 
 #if !defined(_WIN64)
-	m_FileWrapper.SetFileHandle( File, false );
+	m_FileWrapper.SetFileHandle( File, true );
 #else
 	m_FileWrapper.SetFileHandle( File, true );
 #endif
@@ -132,8 +132,6 @@ Environment:
 
 		throw;
 	}
-
-	fclose( File );
 
 #endif
 }

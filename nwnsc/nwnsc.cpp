@@ -348,15 +348,15 @@ Environment:
 #ifdef _WINDOWS
 		KeyFiles.push_back("data\\nwn_base");
 #else
-		KeyFiles.push_back("data/nwn_base");
+		KeyFiles.emplace_back("data/nwn_base");
 #endif // _WINDOWS
     } else {
-        KeyFiles.push_back("xp3");
-        KeyFiles.push_back("xp2patch");
-        KeyFiles.push_back("xp2");
-        KeyFiles.push_back("xp1patch");
-        KeyFiles.push_back("xp1");
-        KeyFiles.push_back("chitin");
+        KeyFiles.emplace_back("xp3");
+        KeyFiles.emplace_back("xp2patch");
+        KeyFiles.emplace_back("xp2");
+        KeyFiles.emplace_back("xp1patch");
+        KeyFiles.emplace_back("xp1");
+        KeyFiles.emplace_back("chitin");
     }
 
     LoadParams.KeyFiles = &KeyFiles;
@@ -1438,6 +1438,7 @@ Environment:
     }
 }
 
+
 int
 main(
         int argc,
@@ -1489,13 +1490,24 @@ Environment:
     bool ResponseFile = false;
     int ReturnCode = 0;
     bool VerifyCode = false;
-    bool Version = false;
+    bool Usage = false;
     unsigned long Errors = 0;
     unsigned long Flags = NscDFlag_StopOnError;
     UINT32 CompilerFlags = 0;
 
-    START_EASYLOGGINGPP(argc, argv);
-    LOG(INFO) << "My first info log using default logger";
+//    el::Configurations defaultConf;
+//    defaultConf.setToDefault();
+//    defaultConf.set(el::Level::Info,
+//                    el::ConfigurationType::Enabled, "false");
+//    defaultConf.set(el::Level::Warning,
+//                    el::ConfigurationType::Enabled, "false");
+//    defaultConf.set(el::Level::Verbose,
+//                    el::ConfigurationType::Enabled, "false");
+//    defaultConf.set(el::Level::Debug,
+//                    el::ConfigurationType::Enabled, "false");
+//    defaultConf.set(el::Level::Trace,
+//                    el::ConfigurationType::Enabled, "false");
+//    el::Loggers::addFlag(el::LoggingFlag ::LogDetailedCrashReason);
 
 #if defined(_WINDOWS)
     ULONG StartTime = GetTickCount( );
@@ -1503,7 +1515,7 @@ Environment:
     std::chrono::high_resolution_clock::time_point StartTime = std::chrono::high_resolution_clock::now();
 #endif
 
-    SearchPaths.push_back(".");
+    SearchPaths.emplace_back(".");
 
     do {
         //
@@ -1602,12 +1614,37 @@ Environment:
                             for (Token = strtok_r(argv[i + 1], ";", &NextToken);
                                  Token != nullptr;
                                  Token = strtok_r(nullptr, ";", &NextToken)) {
-                                SearchPaths.push_back(Token);
+                                SearchPaths.emplace_back(Token);
                             }
 
                             i += 1;
                         }
                             break;
+
+//                        case 'D':
+//                            defaultConf.set(el::Level::Debug,
+//                                            el::ConfigurationType::Enabled, "true");
+//                            break;
+//
+//                        case 'I':
+//                            defaultConf.set(el::Level::Info,
+//                                            el::ConfigurationType::Enabled, "true");
+//                            break;
+//
+//                        case 'V':
+//                            defaultConf.set(el::Level::Verbose,
+//                                            el::ConfigurationType::Enabled, "true");
+//                            break;
+//
+//                        case 'W':
+//                            defaultConf.set(el::Level::Warning,
+//                                            el::ConfigurationType::Enabled, "true");
+//                            break;
+//
+//                        case 'T':
+//                            defaultConf.set(el::Level::Trace,
+//                                            el::ConfigurationType::Enabled, "true");
+//                            break;
 
                         case 'j':
                             CompilerFlags |= NscCompilerFlag_ShowIncludes;
@@ -1617,11 +1654,8 @@ Environment:
                             CompilerFlags |= NscCompilerFlag_ShowPreprocessed;
                             break;
 
-                        case 'l':
-                            LoadResources = true;
-                            break;
-
                         case 'n': {
+                            LoadResources = true;
                             if (i + 1 >= argc) {
                                 g_TextOut.WriteText("Error: Malformed arguments.\n");
                                 Error = true;
@@ -1696,7 +1730,7 @@ Environment:
                             break;
 
                         case 'v':
-                            Version = true;
+                            Usage = true;
                             break;
 
                         case 'x': {
@@ -1781,46 +1815,54 @@ Environment:
     } while (!Error);
 
 
-    if ((Version) || (Error) || (InFiles.empty())) {
+    if ((Usage) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
-                "\nUsage:\n"
-                        "nwnsc [-degjklorsqy] [-b batchoutdir] [-h homedir] [[-i pathspec] ...] [-n installdir]\n"
+                "\nUsage: version %s - built %s %s\n\n"
+                        "nwnsc [-degjkorsqvyL] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
-                        "  batchoutdir - Supplies the location where batch mode places output files\n"
-                        "  homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights).\n"
-                        "  pathspec    - Semicolon separated list of folders to search for additional includes.\n"
-                        "  installdir  - Neverwinter Nights install folder. Use with -l to load base game includes.\n"
-                        "  mode        - Compiler mode 1.69 or 1.74 - (default 1.74) \n"
-                        "  errprefix   - Prefix string to prepend to compiler errors (default \"Error\").\n\n"
-                        "  -d - Disassemble the script (overrides default compile.\n"
-                        "  -e - Enable non-BioWare extensions.\n"
-                        "  -g - Enable generation of .ndb debug symbols file.\n"
-                        "  -j - Show where include file are being sourced from.\n"
-                        "  -k - Show preprocessed source text to console output.\n"
-                        "  -l - Load base game resources to resolve standard includes.\n"
-                        "  -o - Optimize the compiled script.\n"
-                        "  -p - Dump internal PCode for compiled script contributions.\n"
-                        "  -q - Silence most messages.\n"
-                        "  -r - Filename for output file.\n"
+                        "  -b batchoutdir - Supplies the location where batch mode places output files\n"
+                        "  -h homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights)\n"
+                        "  -i pathspec    - Semicolon separated list of folders to search for additional includes\n"
+                        "  -n installdir  - Neverwinter Nights install folder. Use to load base game includes\n"
+                        "  -m mode        - Compiler mode 1.69 or 1.74 - (default 1.74) \n"
+                        "  -x errprefix   - Prefix string to prepend to compiler errors (default \"Error\")\n\n"
+                        "  -d - Disassemble the script (overrides default compile\n"
+                        "  -e - Enable non-BioWare extensions\n"
+                        "  -g - Enable generation of .ndb debug symbols file\n"
+                        "  -j - Show where include file are being sourced from\n"
+                        "  -k - Show preprocessed source text to console output\n"
+                        "  -o - Optimize the compiled script\n"
+                        "  -p - Dump internal PCode for compiled script contributions\n"
+                        "  -q - Silence most messages\n"
+                        "  -r - Filename for output file\n"
                         "  -s - Enable Strict mode. This enables stock compiler compatibility that allows\n"
-                        "       some potentially unsafe conditions. (default: off)\n"
-                        "  -v - Version info and Detailed Usage.\n"
-                        "  -y - Continue processing input files even on error.\n\n"
+                        "       some potentially unsafe conditions (default: off)\n"
+                        "  -v - Version and detailed usage message\n"
+                        "  -y - Continue processing input files even on error\n\n",
+                gGIT_VERSION_SHORT.c_str(),
+                __DATE__,
+                __TIME__
         );
-        if (Version) {
-            g_TextOut.WriteText(
-			"nwnsc version %s - built %s %s\n\n"
-            "  Portions Copyright (C) 2008-2015 Skywing.\n"
-			"  Portions copyright (C) 2002-2003, Edward T. Smith.\n"
-			"  Portions copyright (C) 2003, The Open Knights Consortium.\n"
-            "  Adapted for Neverwinter Nights Enhanced Edition and cross platform use by: Glorwinger and Jakkn\n",
-            gGIT_VERSION_SHORT.c_str(),
-			__DATE__,
-			__TIME__);
+        if (Usage) {
+//            g_TextOut.WriteText(
+//                    "Optional debug flags\n"
+//                     "  -D - Set Debug Log level\n"
+//                     "  -I - Set Info Log level\n"
+//                     "  -W - Set Warning Log level\n"
+//                     "  -T - Set Trace Log level\n"
+//            );
+
+            g_TextOut.WriteText("\n"
+            "  Portions Copyright (C) 2008-2015 Skywing\n"
+			"  Portions copyright (C) 2002-2003, Edward T. Smith\n"
+			"  Portions copyright (C) 2003, The Open Knights Consortium\n"
+            "  Adapted for Neverwinter Nights Enhanced Edition and cross platform use by: Glorwinger and Jakkn\n");
         }
 
         return -1;
     }
+
+//    el::Loggers::reconfigureLogger("default", defaultConf);
 
     //
     // Create the resource manager context and load the module, if we are to
@@ -1848,10 +1890,10 @@ Environment:
         // If we're to load game resources, then do so now.
         //
 
-//		if (!Quiet)
-//		{
-//            g_TextOut.WriteText("Loading base game resources...\n");
-//		}
+		if (!Quiet)
+		{
+            g_TextOut.WriteText("Loading base game resources...\n");
+		}
 
         if (InstallDir.empty()) {
             InstallDir = GetNwn1InstallPath();
@@ -1866,6 +1908,19 @@ Environment:
                 InstallDir,
                 Erf16,
                 CompilerVersion);
+
+        if (CompilerVersion >= 174) {
+            std::string Override = InstallDir + "ovr";
+
+#if defined(_WINDOWS)
+            if (Override.back() != '\\')
+                                Override.push_back( '\\' );
+#else
+            if (Override.back() != '/')
+                Override.push_back('/');
+#endif
+            SearchPaths.push_back(Override);
+        }
     }
 
     //

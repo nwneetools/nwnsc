@@ -28,7 +28,10 @@ namespace swutil
 #elseif _WIN32
 		return InterlockedIncrement( Addend );
 #else
-		return __sync_add_and_fetch(Addend,1);
+//        LONG_PTR retval = __sync_add_and_fetch(Addend,1);
+//        LOG(TRACE) << "InterlockedIncrementPtr [" << retval <<"]";
+//		return retval;
+        return __sync_add_and_fetch(Addend,1);
 #endif
 	}
 
@@ -43,7 +46,10 @@ namespace swutil
 #elseif _WIN32
 		return InterlockedDecrement( Addend );
 #else
-		return __sync_sub_and_fetch(Addend,1);
+//        LONG_PTR retval = __sync_sub_and_fetch(Addend,1);
+//        LOG(TRACE) << "InterlockedDecrementPtr [" << retval <<"]";
+//        return retval;
+        return __sync_sub_and_fetch(Addend,1);
 #endif
 	}
 
@@ -156,8 +162,10 @@ namespace swutil
 				// been called.
 				//
 
-				if (((PrevValue + 1) < PrevValue) || (!PrevValue))
-					return false;
+				if (((PrevValue + 1) < PrevValue) || (!PrevValue)) {
+                    LOG(TRACE) << "InterlockedAddReference " << PrevValue;
+                    return false;
+                }
 
 				//
 				// Otherwise, attempt to exchange the current reference count
@@ -173,7 +181,7 @@ namespace swutil
 					(PVOID)(PrevValue)
 					);
 #else
-				__sync_val_compare_and_swap((PVOID volatile * )(Reference),(PVOID)(PrevValue),(PVOID)(PrevCopy + 1));
+				PrevValue = __sync_val_compare_and_swap(Reference,PrevValue,PrevCopy + 1);
 #endif
 			}
 			while (PrevCopy != PrevValue) ;

@@ -39,19 +39,20 @@ endif (NOT BISON_FOUND)
 
 if (UNIX OR APPLE)
 	#set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11")
-	set(CMAKE_CXX_FLAGS " -g -w -O2 -m32 -std=c++11")
+	set(CMAKE_CXX_FLAGS " -g -w -O2 -m32 -std=c++11 -DELPP_FEATURE_CRASH_LOG -DELPP_LOGGING_FLAGS_FROM_ARG")
 	#set(CMAKE_CXX_FLAGS "-g -w -m32 -std=c++11")
 	#set(CMAKE_CXX_FLAGS "-w /EHsc")
 endif()
 
 if (MINGW OR CYGWIN)
     #set(CMAKE_CXX_FLAGS "-Wall -Wno-unused -Wno-write-strings -Wno-deprecated -std=c++11 -static")
-    set(CMAKE_CXX_FLAGS " -w -O2 -m32 -std=c++11 -static")
+    set(CMAKE_CXX_FLAGS " -w -O2 -m32 -std=c++11 -static -DELPP_FEATURE_CRASH_LOG -DELPP_LOGGING_FLAGS_FROM_ARG")
     #set(CMAKE_CXX_FLAGS "-g -w -m32 -std=c++11 -static")
     #set(CMAKE_CXX_FLAGS "-w /EHsc")
 endif()
 
 if (MSVC)
+    set(CMAKE_CXX_FLAGS " /DELPP_LOGGING_FLAGS_FROM_ARG")
 	foreach(flag_var
         CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
         CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)

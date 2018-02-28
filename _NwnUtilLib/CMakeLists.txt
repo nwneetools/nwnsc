@@ -3,6 +3,7 @@ add_library(nwnutillib
         easylogging++
         findfirst
         NWNUtilLib
+        optionparser
         OsCompat
         Precomp
         ProjGlobalDefs
