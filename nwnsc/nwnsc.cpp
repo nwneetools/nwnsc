@@ -354,7 +354,7 @@ Environment:
         KeyFiles.emplace_back("xp3");
         KeyFiles.emplace_back("xp2patch");
         KeyFiles.emplace_back("xp2");
-        KeyFiles.emplace_back("xp1patch");
+        //KeyFiles.emplace_back("xp1patch");
         KeyFiles.emplace_back("xp1");
         KeyFiles.emplace_back("chitin");
     }
@@ -1732,7 +1732,8 @@ Environment:
                                     break;
                                 }
                             }
-                        }
+							i += 1;
+						}
                             break;
 
                         case 'o':
