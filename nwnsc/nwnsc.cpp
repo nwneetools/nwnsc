@@ -1685,6 +1685,10 @@ Environment:
                             CompilerFlags |= NscCompilerFlag_ShowPreprocessed;
                             break;
 
+                        case 'l': 
+                            LoadResources = true;
+                            break;
+
                         case 'n': {
                             LoadResources = true;
                             if (i + 1 >= argc) {
@@ -1853,7 +1857,7 @@ Environment:
     if ((Usage) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
                 "\nUsage: version %s - built %s %s\n\n"
-                        "nwnsc [-degjkorsqvyM] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
+                        "nwnsc [-degjklorsqvyM] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  -b batchoutdir - Supplies the location where batch mode places output files\n"
                         "  -h homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights)\n"
@@ -1866,6 +1870,7 @@ Environment:
                         "  -g - Enable generation of .ndb debug symbols file\n"
                         "  -j - Show where include file are being sourced from\n"
                         "  -k - Show preprocessed source text to console output\n"
+                        "  -l - Load base game resources - not required with -n. Will scan registry for 1.69 game install.\n"
                         "  -o - Optimize the compiled script\n"
                         "  -p - Dump internal PCode for compiled script contributions\n"
                         "  -q - Silence most messages\n"
