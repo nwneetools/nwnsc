@@ -1543,6 +1543,7 @@ Environment:
                     el::ConfigurationType::Enabled, "false");
     defaultConf.set(el::Level::Trace,
                     el::ConfigurationType::Enabled, "false");
+    defaultConf.set(el::Level::Global, el::ConfigurationType::ToFile, "false");
     el::Loggers::addFlag(el::LoggingFlag ::LogDetailedCrashReason);
 
 #if defined(_WINDOWS)
