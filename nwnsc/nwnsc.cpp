@@ -721,6 +721,8 @@ Environment:
         SrcFile = nullptr;
         return false;
     }
+    
+    fclose(SrcFile);
     return true;
 
 
