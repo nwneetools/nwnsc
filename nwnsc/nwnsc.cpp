@@ -16,8 +16,11 @@ Abstract:
 #ifdef _WINDOWS
 #include <time.h>
 #include <io.h>
+#include <Shlobj.h>
+#include <comutil.h> //for _bstr_t (used in the string conversion)
 #define strtok_r strtok_s
 #define access    _access_s
+#pragma comment(lib, "comsuppw")
 #endif
 
 #include <vector>
@@ -193,11 +196,23 @@ bool FileExists( const std::string &Filename )
 }
 
 std::string GetHomeDirectory () {
-    char * homedir = getenv("HOME");
-    if ( homedir == NULL ) {
-        homedir = getpwuid(getuid())->pw_dir;
-    }
-    return std::string (homedir);
+#if defined(__linux__) || defined(__APPLE__)
+	char * homedir = getenv("HOME");
+	if (homedir == NULL) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+	LOG(DEBUG) << "HomeDir " << homedir;
+	return std::string(homedir);
+#elif defined(_WINDOWS)
+	PWSTR wszPath;
+	SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_DEFAULT, NULL, &wszPath);
+
+	_bstr_t bstrPath(wszPath);
+	std::string strPath((char*)bstrPath);
+
+	LOG(DEBUG) << "HomeDir " << strPath;
+	return std::string(strPath);
+#endif
 }
 
 std::string
@@ -255,7 +270,7 @@ Environment:
 #elif defined(__linux__)
             settingsFile = GetHomeDirectory() + "/.config/Beamdog Client/settings.json";
 #elif defined(_WINDOWS)
-            settingsFile = getHomeDir() + "\\AppData\\Roaming\\Beamdog Client\\settings.json"
+			settingsFile = GetHomeDirectory() + "\\Beamdog Client\\settings.json";
 #endif
             LOG(DEBUG) << " settingsFile " << settingsFile;
 
@@ -284,7 +299,7 @@ Environment:
                             }
 
 #ifdef _WINDOWS
-                            RootDir.push_back("\\");
+                            RootDir.push_back('\\');
 #else
                             RootDir.push_back('/');
 #endif
@@ -296,7 +311,7 @@ Environment:
                                 if (FileExists(RootDir + it->first + KeyFile)) {
                                     RootDir += it->first;
 #ifdef _WINDOWS
-                                    RootDir.push_back("\\");
+                                    RootDir.push_back('\\');
 #else
                                     RootDir.push_back('/');
 #endif
@@ -456,7 +471,7 @@ Environment:
 
 	    Status = RegOpenKeyEx(
 		    HKEY_LOCAL_MACHINE,
-		    L"SOFTWARE\\BioWare\\NWN\\Neverwinter",
+		    "SOFTWARE\\BioWare\\NWN\\Neverwinter",
 		    REG_OPTION_RESERVED,
 #ifdef _WIN64
 		    KEY_QUERY_VALUE | KEY_WOW64_32KEY,
