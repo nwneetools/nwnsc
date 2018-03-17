@@ -39,8 +39,11 @@ Abstract:
 #if defined(__linux__) || defined(__APPLE__)
 #include <libgen.h>
 #include <chrono>
-#include <codecvt>
 #include <pwd.h>
+#endif
+
+#if defined(__APPLE__)
+//#include <codecvt>
 #endif
 
 #include "../_NwnUtilLib/easylogging++.h"
@@ -175,20 +178,13 @@ public:
 PrintfTextOut g_TextOut;
 ResourceManager *g_ResMan;
 
-std::wstring s2ws(const std::string& str)
-{
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
-
-    return converterX.from_bytes(str);
-}
-
 std::string ws2s(const std::wstring& wstr)
 {
-    using convert_typeX = std::codecvt_utf8<wchar_t>;
-    std::wstring_convert<convert_typeX, wchar_t> converterX;
+    std::string result;
+    for(char x : wstr)
+        result += x;
 
-    return converterX.to_bytes(wstr);
+    return result;
 }
 
 bool FileExists( const std::string &Filename )
