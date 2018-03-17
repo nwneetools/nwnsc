@@ -17,6 +17,7 @@ Abstract:
 #include <time.h>
 #include <io.h>
 #define strtok_r strtok_s
+#define access    _access_s
 #endif
 
 #include <vector>
@@ -28,6 +29,7 @@ Abstract:
 #include "../_NscLib/Nsc.h"
 #include "../_NwnUtilLib/findfirst.h"
 #include "../_NwnUtilLib/version.h"
+#include "../_NwnUtilLib/JSON.h"
 
 #if defined(__linux__)
 #include <unistd.h>
@@ -37,6 +39,8 @@ Abstract:
 #if defined(__linux__) || defined(__APPLE__)
 #include <libgen.h>
 #include <chrono>
+#include <codecvt>
+#include <pwd.h>
 #endif
 
 #include "../_NwnUtilLib/easylogging++.h"
@@ -45,6 +49,13 @@ INITIALIZE_EASYLOGGINGPP
 
 typedef std::vector<std::string> StringVec;
 typedef std::vector<const char *> StringArgVec;
+
+std::vector<std::pair<std::string, std::string>> NwnVersions = {
+    { "00840", "NWN EE Digital Deluxe Beta (Head Start)" },
+    { "00829", "NWN EE Beta (Head Start)" },
+    { "00839", "NWN EE Digital Deluxe" },
+    { "00785", "NWN EE" }
+};
 
 typedef enum _NSCD_FLAGS {
     //
@@ -164,10 +175,37 @@ public:
 PrintfTextOut g_TextOut;
 ResourceManager *g_ResMan;
 
+std::wstring s2ws(const std::string& str)
+{
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+    return converterX.from_bytes(str);
+}
+
+std::string ws2s(const std::wstring& wstr)
+{
+    using convert_typeX = std::codecvt_utf8<wchar_t>;
+    std::wstring_convert<convert_typeX, wchar_t> converterX;
+
+    return converterX.to_bytes(wstr);
+}
+
+bool FileExists( const std::string &Filename )
+{
+    return access( Filename.c_str(), 0 ) == 0;
+}
+
+std::string GetHomeDirectory () {
+    char * homedir = getenv("HOME");
+    if ( homedir == NULL ) {
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+    return std::string (homedir);
+}
 
 std::string
-GetNwn1InstallPath(
-)
+GetNwnInstallPath(int CompilerVersion, bool Quiet)
 /*++
 
 Routine Description:
@@ -190,78 +228,189 @@ Environment:
 
 --*/
 {
-#if defined(_WIN32) || defined(_WIN64)
-    HKEY Key;
-    LONG Status;
+    std::string RootDir;
+    char *EnvNwnRoot;
+    std::string KeyFile;
 
-    Status = RegOpenKeyEx(
-        HKEY_LOCAL_MACHINE,
-        "SOFTWARE\\BioWare\\NWN\\Neverwinter",
-        REG_OPTION_RESERVED,
-#ifdef _WIN64
-        KEY_QUERY_VALUE | KEY_WOW64_32KEY,
+    EnvNwnRoot = getenv("NWN_ROOT");
+
+    if (EnvNwnRoot != NULL) {
+        RootDir = EnvNwnRoot;
+#if defined(_WINDOWS)
+        if (RootDir.back() != '\\')
+            RootDir.push_back( '\\' );
+        KeyFile = "\\data\\nwn_base.key";
 #else
-        KEY_QUERY_VALUE,
+        if (RootDir.back() != '/')
+            RootDir.push_back('/');
+        KeyFile = "/data/nwn_base.key";
 #endif
-        &Key);
+        if (!Quiet) {
+            g_TextOut.WriteText("Base game location from NWN_ROOT - %s\n", RootDir.c_str());
+        }
+        return RootDir;
+    } else {
+        if (CompilerVersion >= 174) {
 
-    if (Status != NO_ERROR)
-        throw std::runtime_error( "Unable to open NWN1 registry key" );
+            std::string settingsFile;
 
-    try
-    {
-            CHAR                NameBuffer[ MAX_PATH + 1 ];
-            DWORD               NameBufferSize;
-            bool                FoundIt;
-            static const char * ValueNames[ ] =
-            {
-                "Path",     // Retail NWN
-                "Location", // Steam NWN
-            };
+#if defined(__APPLE__)
+            settingsFile = GetHomeDirectory() + "/Library/Application Support/Beamdog Client/settings.json";
+#elif defined(__linux__)
+            settingsFile = GetHomeDirectory() + "/.config/Beamdog Client/settings.json";
+#elif defined(_WINDOWS):
+            settingsFile = getHomeDir() + "\\AppData\\Roaming\\Beamdog Client\\settings.json"
+#endif
+            LOG(DEBUG) << " settingsFile " << settingsFile;
 
-            FoundIt = false;
+            if (FileExists(settingsFile)) {
+                std::ifstream InStream(settingsFile, std::ifstream::in);
+                std::stringstream buffer;
+                buffer << InStream.rdbuf();
 
-            for (size_t i = 0; i < _countof( ValueNames ); i += 1)
-            {
-                NameBufferSize = sizeof( NameBuffer ) - sizeof( NameBuffer[ 0 ] );
+                std::string str(buffer.str());
 
-                Status = RegQueryValueExA(
-                    Key,
-                    ValueNames[ i ],
-                    nullptr,
-                    nullptr,
-                    (LPBYTE) NameBuffer,
-                    &NameBufferSize);
+                // Parse data
+                JSONValue *value = JSON::Parse(str.c_str());
 
-                if (Status != NO_ERROR)
-                    continue;
+                if (value != NULL) {
 
-                //
-                // Strip trailing nullptr byte if it exists.
-                //
+                    JSONObject root;
+                    if (value->IsObject() != false) {
+                        root = value->AsObject();
 
-                if ((NameBufferSize > 0) &&
-                    (NameBuffer[ NameBufferSize - 1 ] == '\0'))
-                    NameBufferSize -= 1;
+                        // Retrieving an array
+                        if (root.find(L"folders") != root.end() && root[L"folders"]->IsArray()) {
+                            JSONArray array = root[L"folders"]->AsArray();
 
-                return std::string( NameBuffer, NameBufferSize );
+                            if (array.size() > 0) {
+                                RootDir = ws2s(array[0]->AsString());
+                            }
+
+#ifdef _WINDOWS
+                            RootDir.push_back("\\");
+#else
+                            RootDir.push_back('/');
+#endif
+
+                            std::string GameStr;
+
+                            std::vector<std::pair<std::string, std::string>>::iterator it;  // declare an iterator to a vector of strings
+                            for (it = NwnVersions.begin(); it != NwnVersions.end(); it++) {
+                                if (FileExists(RootDir + it->first + KeyFile)) {
+                                    RootDir += it->first;
+#ifdef _WINDOWS
+                                    RootDir.push_back("\\");
+#else
+                                    RootDir.push_back('/');
+#endif
+                                    GameStr = it->second;
+                                    break;
+                                }
+                            }
+
+                            LOG(DEBUG) << " RootDir " << RootDir;
+                            if (!Quiet) {
+                                g_TextOut.WriteText("Base game %s location - %s\n", GameStr.c_str(), RootDir.c_str());
+                            }
+                        }
+
+                    }
+                }
+            } else {
+                std::string SteamRootDir;
+#if defined(__APPLE__)
+                SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
+#elif defined(__linux__)
+                SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
+#elif defined(_WINDOWS):
+                SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
+#endif
+                if (FileExists(SteamRootDir + KeyFile))
+                    RootDir = SteamRootDir;
             }
+            return RootDir;
 
-            throw std::exception( "Unable to read Path from NWN1 registry key" );
-    }
-    catch (...)
-    {
-        RegCloseKey( Key );
-        throw;
-    }
+        } else {
+#if defined(_WINDOWS)
+            HKEY Key;
+            LONG Status;
+
+            Status = RegOpenKeyEx(
+                HKEY_LOCAL_MACHINE,
+                "SOFTWARE\\BioWare\\NWN\\Neverwinter",
+                REG_OPTION_RESERVED,
+#ifdef _WIN64
+                KEY_QUERY_VALUE | KEY_WOW64_32KEY,
 #else
-    return "";
+                KEY_QUERY_VALUE,
 #endif
+                &Key);
+
+            if (Status != NO_ERROR)
+                throw std::runtime_error( "Unable to open NWN registry key" );
+
+            try
+            {
+                    CHAR                NameBuffer[ MAX_PATH + 1 ];
+                    DWORD               NameBufferSize;
+                    bool                FoundIt;
+                    static const char * ValueNames[ ] =
+                    {
+                        "Path",     // Retail NWN
+                        "Location", // Steam NWN
+                    };
+
+                    FoundIt = false;
+
+                    for (size_t i = 0; i < _countof( ValueNames ); i += 1)
+                    {
+                        NameBufferSize = sizeof( NameBuffer ) - sizeof( NameBuffer[ 0 ] );
+
+                        Status = RegQueryValueExA(
+                            Key,
+                            ValueNames[ i ],
+                            nullptr,
+                            nullptr,
+                            (LPBYTE) NameBuffer,
+                            &NameBufferSize);
+
+                        if (Status != NO_ERROR)
+                            continue;
+
+                        //
+                        // Strip trailing nullptr byte if it exists.
+                        //
+
+                        if ((NameBufferSize > 0) &&
+                            (NameBuffer[ NameBufferSize - 1 ] == '\0'))
+                            NameBufferSize -= 1;
+
+                        std::string NwnRootDir = std::string( NameBuffer, NameBufferSize );
+
+                        if (!Quiet) {
+                            g_TextOut.WriteText("Base game location - %s\n", NwnRootDir.c_str());
+                        }
+
+                        return NwnRootDir;
+                    }
+
+                    throw std::exception( "Unable to read Path from NWN registry key" );
+            }
+            catch (...)
+            {
+                RegCloseKey( Key );
+                throw;
+            }
+#else
+            return "";
+#endif
+        }
+    }
 }
 
 std::string
-GetNwnHomePath(
-)
+GetNwnHomePath(int CompilerVersion, bool Quiet)
 /*++
 
 Routine Description:
@@ -285,11 +434,100 @@ Environment:
 
 --*/
 {
-    std::string DocumentsPath;
     std::string HomePath;
 
-    HomePath = DocumentsPath;
-    HomePath += "\\Neverwinter Nights\\";
+    if (CompilerVersion >= 174) {
+
+#if defined(__APPLE__)
+        HomePath = "~/Documents/Neverwinter Nights/";
+#elif defined(__linux__)
+        HomePath = "~/Documents/Neverwinter Nights/";
+#elif defined(_WINDOWS)
+        CHAR        DocumentsPath[ MAX_PATH ];
+
+    	if (!SHGetSpecialFolderPathA( NULL, DocumentsPath, CSIDL_PERSONAL, TRUE ))
+	    	throw std::runtime_error( "Couldn't get user documents path." );
+
+	    HomePath  = DocumentsPath;
+	    HomePath += "\\Neverwinter Nights\\";
+#else
+        HomePath = ""
+#endif
+    } else {
+#if defined(_WINDOWS)
+        HKEY Key;
+	    LONG Status;
+
+	    Status = RegOpenKeyEx(
+		    HKEY_LOCAL_MACHINE,
+		    L"SOFTWARE\\BioWare\\NWN\\Neverwinter",
+		    REG_OPTION_RESERVED,
+#ifdef _WIN64
+		    KEY_QUERY_VALUE | KEY_WOW64_32KEY,
+#else
+		    KEY_QUERY_VALUE,
+#endif
+		    &Key);
+
+	    if (Status != NO_ERROR)
+		    throw std::runtime_error( "Unable to open NWN registry key" );
+
+	    try
+	    {
+			CHAR                NameBuffer[ MAX_PATH + 1 ];
+			DWORD               NameBufferSize;
+			bool                FoundIt;
+			static const char * ValueNames[ ] =
+			{
+				"Path",     // Retail NWN2
+				"Location", // Steam NWN2
+			};
+
+			FoundIt = false;
+
+			for (size_t i = 0; i < _countof( ValueNames ); i += 1)
+			{
+				NameBufferSize = sizeof( NameBuffer ) - sizeof( NameBuffer[ 0 ] );
+
+				Status = RegQueryValueExA(
+					Key,
+					ValueNames[ i ],
+					NULL,
+					NULL,
+					(LPBYTE) NameBuffer,
+					&NameBufferSize);
+
+				if (Status != NO_ERROR)
+					continue;
+
+				//
+				// Strip trailing null byte if it exists.
+				//
+
+				if ((NameBufferSize > 0) &&
+					(NameBuffer[ NameBufferSize - 1 ] == '\0'))
+					NameBufferSize -= 1;
+
+				HomePath = std::string( NameBuffer, NameBufferSize );
+			}
+
+			throw std::exception( "Unable to read Path from NWN registry key" );
+	    }
+	    catch (...)
+	    {
+		    RegCloseKey( Key );
+		    throw;
+	    }
+#else
+        HomePath = "";
+#endif
+    }
+    LOG(DEBUG) << " HomePath " << HomePath;
+    if (!Quiet)
+    {
+        g_TextOut.WriteText("Home Path - %s\n",HomePath.c_str());
+    }
+
 
     return HomePath;
 }
@@ -462,8 +700,10 @@ Environment:
 
     SrcFile = fopen(FileName.c_str(), "r");
 
-    if (SrcFile == NULL)
+    if (SrcFile == NULL) {
+        LOG(DEBUG) << "Failed to Open Script " << FileName.c_str();
         return false;
+    }
 
     FileContents.clear();
 
@@ -478,7 +718,9 @@ Environment:
                     "LoadFileFromDisk File Contents");
         }
 
-    } catch (std::exception) {
+    } catch (std::exception &ex) {
+        LOG(DEBUG) << "Error reading script file " << FileName.c_str();
+        LOG(DEBUG) << ex.what();
         fclose(SrcFile);
         SrcFile = nullptr;
         return false;
@@ -591,9 +833,10 @@ Environment:
     // system.
     //
 
-    if (!access(InFile.c_str(), 00)) {
+    if (!access(InFile.c_str(), 0)) {
         return LoadFileFromDisk(InFile, FileContents);
     } else {
+        LOG(DEBUG) << "Script failed existence check " << InFile.c_str();
         return false;
     }
 }
@@ -739,6 +982,7 @@ Environment:
     f = fopen(FileName.c_str(), "wb");
 
     if (f == nullptr) {
+        LOG(DEBUG) << "Error Number " << errno;
         TextOut->WriteText(
                 "Error: Unable to open output file %s.\n",
                 FileName.c_str());
@@ -1872,7 +2116,7 @@ Environment:
                         "  -g - Enable generation of .ndb debug symbols file\n"
                         "  -j - Show where include file are being sourced from\n"
                         "  -k - Show preprocessed source text to console output\n"
-                        "  -l - Load base game resources - not required with -n. Will scan registry for 1.69 game install.\n"
+                        "  -l - Load base game resources - not required with -n\n"
                         "  -o - Optimize the compiled script\n"
                         "  -p - Dump internal PCode for compiled script contributions\n"
                         "  -q - Silence most messages\n"
@@ -1881,7 +2125,20 @@ Environment:
                         "       some potentially unsafe conditions (default: off)\n"
                         "  -v - Version and detailed usage message\n"
                         "  -y - Continue processing input files even on error\n"
-                        "  -M - Create makefile dependency (.d) files\n\n",
+                        "  -M - Create makefile dependency (.d) files\n\n"
+                        "  The Compiler requires the nwscript.nss from the game resources. The following order\n"
+                        "      will be followed to find the file. The search stops on the first match.\n"
+                        "    1. -i pathspec  The pathspec will be searched as the game scipts may\n"
+                        "            be unpacked into a flat folder structure\n"
+                        "    2. -n installdir will be searched.  The search starts with <installdir>/ovr\n"
+                        "            and continues with <installdir>/data/*.bif files\n"
+                        "    3. -l If the -l flag is passed The following sources are searched:\n"
+                        "            Check the environment variable NWN_ROOT\n"
+                        "            NWN EE Digital Deluxe Beta (Head Start)\n"
+                        "            NWN EE Beta (Head Start)\n"
+                        "            NWN EE Digital Deluxe\n"
+                        "            NWN EE \n"
+                        "            NWN Steam\n\n",
                 gGIT_VERSION_SHORT.c_str(),
                 __DATE__,
                 __TIME__
@@ -1940,11 +2197,11 @@ Environment:
 		}
 
         if (InstallDir.empty()) {
-            InstallDir = GetNwn1InstallPath();
+            InstallDir = GetNwnInstallPath(CompilerVersion,Quiet);
         }
 
         if (HomeDir.empty())
-            HomeDir = GetNwnHomePath();
+            HomeDir = GetNwnHomePath(CompilerVersion, Quiet);
 
         LoadScriptResources(
                 *g_ResMan,

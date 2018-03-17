@@ -151,8 +151,9 @@ bool NscCompilerInitialize (CNwnLoader *pLoader, int nVersion,
 		"nwscript", NwnResType_NSS, &ulSize, &fAllocated);
 	if (pauchData == NULL)
 	{
-		if (pTextOut)
-			pTextOut ->WriteText ("Unable to load nwscript.nss\n");
+		if (pTextOut) {
+			pTextOut->WriteText("ERROR: Unable to locate script nwscript.nss.\n");
+		}
 		return false;
 	}
 

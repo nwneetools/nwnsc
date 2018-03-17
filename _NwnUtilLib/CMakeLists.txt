@@ -2,6 +2,8 @@ add_library(nwnutillib
         BufferParser
         easylogging++
         findfirst
+        JSON
+        JSONValue
         NWNUtilLib
         optionparser
         OsCompat
