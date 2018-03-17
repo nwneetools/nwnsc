@@ -254,7 +254,7 @@ Environment:
             settingsFile = GetHomeDirectory() + "/Library/Application Support/Beamdog Client/settings.json";
 #elif defined(__linux__)
             settingsFile = GetHomeDirectory() + "/.config/Beamdog Client/settings.json";
-#elif defined(_WINDOWS):
+#elif defined(_WINDOWS)
             settingsFile = getHomeDir() + "\\AppData\\Roaming\\Beamdog Client\\settings.json"
 #endif
             LOG(DEBUG) << " settingsFile " << settingsFile;
@@ -319,7 +319,7 @@ Environment:
                 SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
 #elif defined(__linux__)
                 SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
-#elif defined(_WINDOWS):
+#elif defined(_WINDOWS)
                 SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
 #endif
                 if (FileExists(SteamRootDir + KeyFile))
