@@ -1,6 +1,8 @@
 nwnsc script compiler
 
 
+Binaries Avaialble - https://neverwintervault.org/project/nwn1/other/tool/nwnsc-nwn-enhanced-edition-script-compiler
+
 ---------------------------------------
 
 This source release includes libraries to read and manipulate various
