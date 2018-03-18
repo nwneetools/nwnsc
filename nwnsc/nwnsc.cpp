@@ -966,7 +966,7 @@ Environment:
         case NscResult_Include:
             if (!Quiet) {
                 TextOut->WriteText(
-                        "%s.nss is an include file, ignored.\n",
+                        "%s.nss is an include file, ignored.",
                         InFile.RefStr);
             }
 
