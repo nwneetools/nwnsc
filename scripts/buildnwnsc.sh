@@ -25,6 +25,7 @@ CC="gcc -m32"
 CXX="g++ -m32"
 
 if [ ${CLEAN} == 0 ]; then
+    make clean
     if [ -d ./CMakeFiles ]; then
         echo "Removing CMakeFiles"
         rm -rf ./CMakeFiles;
