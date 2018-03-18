@@ -145,6 +145,7 @@ enum NscCompilerFlags
 	NscCompilerFlag_ShowPreprocessed	= 0x00000004,
 	NscCompilerFlag_StrictModeEnabled	= 0x00000008,
 	NscCompilerFlag_GenerateMakeDeps	= 0x00000010,
+    NscCompilerFlag_SuppressWarnings   	= 0x00000020,
 };
 
 //-----------------------------------------------------------------------------
@@ -1299,6 +1300,7 @@ private:
 	bool                          m_EnableExtensions;
 	bool                          m_ShowIncludes;
 	bool                          m_GenerateMakeDeps;
+    bool                          m_SuppressWarnings;
 	bool                          m_ShowPreprocessed;
 	bool                          m_Initialized;
 	bool                          m_NWScriptParsed;

@@ -2754,34 +2754,40 @@ void StackTrace::generateNew(void) {
 static std::string crashReason(int sig) {
   std::stringstream ss;
   bool foundReason = false;
-  for (int i = 0; i < base::consts::kCrashSignalsCount; ++i) {
-    if (base::consts::kCrashSignals[i].numb == sig) {
-      ss << "Application has crashed due to [" << base::consts::kCrashSignals[i].name << "] signal";
-      if (ELPP->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
-        ss << std::endl <<
-           "    " << base::consts::kCrashSignals[i].brief << std::endl <<
-           "    " << base::consts::kCrashSignals[i].detail;
+  if (sig != base::consts::kCrashSignals[4].numb) {
+    for (int i = 0; i < base::consts::kCrashSignalsCount - 1; ++i) {
+      if (base::consts::kCrashSignals[i].numb == sig) {
+        ss << "Application has crashed due to [" << base::consts::kCrashSignals[i].name << "] signal";
+        if (ELPP->hasFlag(el::LoggingFlag::LogDetailedCrashReason)) {
+          ss << std::endl <<
+             "    " << base::consts::kCrashSignals[i].brief << std::endl <<
+             "    " << base::consts::kCrashSignals[i].detail;
+        }
+        foundReason = true;
       }
-      foundReason = true;
     }
-  }
-  if (!foundReason) {
-    ss << "Application has crashed due to unknown signal [" << sig << "]";
+    if (!foundReason) {
+      ss << "Application has crashed due to unknown signal [" << sig << "]";
+    }
   }
   return ss.str();
 }
 /// @brief Logs reason of crash from sig
 static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, const char* logger) {
   std::stringstream ss;
-  ss << "CRASH HANDLED; ";
-  ss << crashReason(sig);
+  if (sig == base::consts::kCrashSignals[4].numb) {
+    ss << "Aborted Ctrl-C";
+  } else {
+    ss << "CRASH HANDLED; ";
+    ss << crashReason(sig);
 #if ELPP_STACKTRACE
-  if (stackTraceIfAvailable) {
-    ss << std::endl << "    ======= Backtrace: =========" << std::endl << base::debug::StackTrace();
-  }
+    if (stackTraceIfAvailable) {
+      ss << std::endl << "    ======= Backtrace: =========" << std::endl << base::debug::StackTrace();
+    }
 #else
-  ELPP_UNUSED(stackTraceIfAvailable);
+    ELPP_UNUSED(stackTraceIfAvailable);
 #endif  // ELPP_STACKTRACE
+  }
   ELPP_WRITE_LOG(el::base::Writer, level, base::DispatchAction::NormalLog, logger) << ss.str();
 }
 

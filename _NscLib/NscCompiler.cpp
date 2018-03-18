@@ -139,7 +139,7 @@ bool NscCompilerInitialize (CNwnLoader *pLoader, int nVersion,
 	NscAddToken ("OBJECT_SELF",    OBJECT_SELF_CONST, pCompiler);
 	NscAddToken ("OBJECT_INVALID", OBJECT_INVALID_CONST, pCompiler);
 
-	pCompiler ->NscGetCompilerState () ->m_fEnableExtensions = fEnableExtensions;
+	pCompiler ->NscGetCompilerState() ->m_fEnableExtensions = fEnableExtensions;
 
 	//
 	// Read NWSCRIPT
@@ -569,6 +569,9 @@ NscCompiler::NscCompiler (
   m_EnableExtensions (EnableExtensions),
   m_ShowIncludes (false),
   m_ShowPreprocessed(false),
+  m_GenerateMakeDeps(false),
+  m_StrictModeEnabled(false),
+  m_SuppressWarnings(false),
   m_Initialized (false),
   m_NWScriptParsed (false),
   m_SymbolTableReady (false),
@@ -724,6 +727,8 @@ NscCompiler::NscCompileScript (
 	m_GenerateMakeDeps = (CompilerFlags & NscCompilerFlag_GenerateMakeDeps) != 0;
 	m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
 	m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
+    m_SuppressWarnings = (CompilerFlags & NscCompilerFlag_SuppressWarnings) != 0;
+    m_CompilerState->m_SuppressWarnings = m_SuppressWarnings;
 
 	Result = NscCompileScript (ScriptName,
 		(FileSize != 0) ? &FileContents [0] : NULL,
@@ -742,6 +747,7 @@ NscCompiler::NscCompileScript (
 	m_GenerateMakeDeps = false;
 	m_ShowPreprocessed = false;
     m_StrictModeEnabled = false;
+    m_SuppressWarnings = false;
 
 	return Result;
 }
@@ -835,6 +841,8 @@ NscCompiler::NscCompileScript (
 		m_GenerateMakeDeps = (CompilerFlags & NscCompilerFlag_GenerateMakeDeps) != 0;
 		m_ShowPreprocessed = (CompilerFlags & NscCompilerFlag_ShowPreprocessed) != 0;
 		m_StrictModeEnabled = (CompilerFlags & NscCompilerFlag_StrictModeEnabled) != 0;
+        m_SuppressWarnings = (CompilerFlags & NscCompilerFlag_SuppressWarnings) != 0;
+        m_CompilerState->m_SuppressWarnings = m_SuppressWarnings;
 
 		//
 		// Compile the script.
@@ -859,6 +867,7 @@ NscCompiler::NscCompileScript (
 		m_GenerateMakeDeps = false;
 		m_ShowPreprocessed = false;
         m_StrictModeEnabled = false;
+        m_SuppressWarnings = false;
 
 		//
 		// Only NscResult_Success actually returns output that is meaningful, so

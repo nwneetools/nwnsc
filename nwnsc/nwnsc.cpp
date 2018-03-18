@@ -936,9 +936,7 @@ Environment:
 
     strncpy(filec, InFile.RefStr, _MAX_FNAME);
 
-    if (!Quiet) {
-        TextOut->WriteText("Compiling: %s.nss\n", InFile.RefStr);
-    }
+    TextOut->WriteText("Compiling: %s.nss\n", InFile.RefStr);
 
     //
     // Execute the main compilation pass.
@@ -2027,6 +2025,10 @@ Environment:
                             Usage = true;
                             break;
 
+                        case 'w':
+                            CompilerFlags |= NscCompilerFlag_SuppressWarnings;
+                            break;
+
                         case 'x': {
                             if (i + 1 >= argc) {
                                 g_TextOut.WriteText("Error: Malformed arguments.\n");
@@ -2116,7 +2118,7 @@ Environment:
     if ((Usage) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
                 "\nUsage: version %s - built %s %s\n\n"
-                        "nwnsc [-degjklorsqvyM] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
+                        "nwnsc [-degjklorsqvwyM] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  -b batchoutdir - Supplies the location where batch mode places output files\n"
                         "  -h homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights)\n"
@@ -2137,6 +2139,7 @@ Environment:
                         "  -s - Enable Strict mode. This enables stock compiler compatibility that allows\n"
                         "       some potentially unsafe conditions (default: off)\n"
                         "  -v - Version and detailed usage message\n"
+                        "  -w - Suppress compile warnings (default: false)\n"
                         "  -y - Continue processing input files even on error\n"
                         "  -M - Create makefile dependency (.d) files\n\n"
                         "  The Compiler requires the nwscript.nss from the game resources. The following order\n"

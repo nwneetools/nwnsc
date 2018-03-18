@@ -92,6 +92,7 @@ struct NscCompilerState
 	const char                  * m_pszErrorPrefix;
 	bool                          m_fEnableExtensions;
 	bool                          m_fSaveSymbolTable;
+	bool 						  m_SuppressWarnings;
 
 	inline
 	NscCompilerState(
@@ -102,7 +103,8 @@ struct NscCompilerState
 	  m_pCtx (NULL),
 	  m_pszErrorPrefix ("Error"),
 	  m_fEnableExtensions (false),
-	  m_fSaveSymbolTable (false)
+	  m_fSaveSymbolTable (false),
+	  m_SuppressWarnings(false)
 	{
 	}
 };
@@ -514,11 +516,14 @@ public:
 	
 	void GenerateWarning (const char *pszText, ...)
 	{
-		va_list marker;
-		va_start (marker, pszText);
-		GenerateError ("Warning", pszText, marker);
-		va_end (marker);
-		m_nWarnings++;
+        bool swarn = GetCompilerState()->m_SuppressWarnings;
+		if (swarn == false) {
+			va_list marker;
+			va_start (marker, pszText);
+			GenerateError("Warning", pszText, marker);
+			va_end (marker);
+			m_nWarnings++;
+		}
 	}
 
 	// @cmember Generate an error
@@ -1067,6 +1072,10 @@ public:
 	void SetMaxIdentifierCount (int nMaxIdentifierCount)
 	{
 		m_nMaxIdentifierCount = nMaxIdentifierCount;
+	}
+
+	void SetSuppressWarnings (bool mSuppressWarnings) {
+		m_SuppressWarnings = mSuppressWarnings;
 	}
 
 	// @cmember Get the current fence
@@ -1682,6 +1691,8 @@ protected:
 	// @cmember Stream containing errors and warnings produced
 
 	IDebugTextOut			*m_pErrorStream;
+
+	bool 					m_SuppressWarnings;
 
 	//
 	// ------- COMPILE TIME
