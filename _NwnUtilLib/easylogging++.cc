@@ -2754,7 +2754,6 @@ void StackTrace::generateNew(void) {
 static std::string crashReason(int sig) {
   std::stringstream ss;
   bool foundReason = false;
-  if (sig != base::consts::kCrashSignals[4].numb) {
     for (int i = 0; i < base::consts::kCrashSignalsCount - 1; ++i) {
       if (base::consts::kCrashSignals[i].numb == sig) {
         ss << "Application has crashed due to [" << base::consts::kCrashSignals[i].name << "] signal";
@@ -2769,15 +2768,11 @@ static std::string crashReason(int sig) {
     if (!foundReason) {
       ss << "Application has crashed due to unknown signal [" << sig << "]";
     }
-  }
   return ss.str();
 }
 /// @brief Logs reason of crash from sig
 static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, const char* logger) {
   std::stringstream ss;
-  if (sig == base::consts::kCrashSignals[4].numb) {
-    ss << "Aborted Ctrl-C";
-  } else {
     ss << "CRASH HANDLED; ";
     ss << crashReason(sig);
 #if ELPP_STACKTRACE
@@ -2787,20 +2782,19 @@ static void logCrashReason(int sig, bool stackTraceIfAvailable, Level level, con
 #else
     ELPP_UNUSED(stackTraceIfAvailable);
 #endif  // ELPP_STACKTRACE
-  }
   ELPP_WRITE_LOG(el::base::Writer, level, base::DispatchAction::NormalLog, logger) << ss.str();
 }
 
 static inline void crashAbort(int sig) {
-  base::utils::abort(sig, std::string());
+        base::utils::abort(sig, std::string());
 }
 
 /// @brief Default application crash handler
 ///
 /// @detail This function writes log using 'default' logger, prints stack trace for GCC based compilers and aborts program.
 static inline void defaultCrashHandler(int sig) {
-  base::debug::logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
-  base::debug::crashAbort(sig);
+    base::debug::logCrashReason(sig, true, Level::Fatal, base::consts::kDefaultLoggerId);
+    base::debug::crashAbort(sig);
 }
 
 // CrashHandler
@@ -2818,7 +2812,11 @@ void CrashHandler::setHandler(const Handler& cHandler) {
 #else
   int i = 1;
 #endif  // defined(ELPP_HANDLE_SIGABRT)
-  for (; i < base::consts::kCrashSignalsCount; ++i) {
+    int size = base::consts::kCrashSignalsCount;
+#if defined(ELPP_IGNORE_SIGINT)
+    size -= size;
+#endif // defined(ELPP_IGNORE_SIGINT)
+  for (; i < size; ++i) {
     m_handler = signal(base::consts::kCrashSignals[i].numb, cHandler);
   }
 }

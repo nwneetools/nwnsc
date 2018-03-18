@@ -936,9 +936,7 @@ Environment:
 
     strncpy(filec, InFile.RefStr, _MAX_FNAME);
 
-    if (!Quiet) {
-        TextOut->WriteText("Compiling: %s.nss\n", InFile.RefStr);
-    }
+    TextOut->WriteText("Compiling: %s.nss", InFile.RefStr);
 
     //
     // Execute the main compilation pass.
