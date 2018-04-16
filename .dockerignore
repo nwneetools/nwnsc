@@ -1,0 +1,8 @@
+.gitignore
+.git
+CHANGELOG.txt
+*.md
+LICENSE
+logs
+.dockerignore
+Dockerfile
