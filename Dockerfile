@@ -1,3 +1,5 @@
+FROM beamdog/nwserver:latest as nwserver
+
 FROM ubuntu:latest
 LABEL maintainers "jakobknutsen@gmail.com & glorwinger"
 WORKDIR /tmp
@@ -16,5 +18,6 @@ RUN buildDeps="build-essential cmake bison" \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -r /var/lib/apt/lists /var/cache/apt
-ENTRYPOINT [ "nwnsc"]
-CMD [ "*.nss" ]
+COPY --from=nwserver /nwn/data /nwn/data
+ENTRYPOINT ["nwnsc"]
+CMD ["*.nss"]
