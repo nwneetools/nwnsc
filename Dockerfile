@@ -2,9 +2,10 @@ FROM ubuntu:latest
 LABEL maintainers "jakobknutsen@gmail.com & glorwinger"
 WORKDIR /tmp
 COPY ./ ./nwnsc/
-RUN buildDeps="build-essential cmake bison g++-multilib" \
+RUN buildDeps="build-essential cmake bison" \
+    && runDeps="g++-multilib" \
     && apt-get update \
-    && apt-get install -y --no-install-recommends $buildDeps \
+    && apt-get install -y --no-install-recommends $buildDeps $runDeps \
     && cd nwnsc \
     && cmake . \
     && make \
