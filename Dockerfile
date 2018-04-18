@@ -12,5 +12,5 @@ RUN buildDeps="bison" \
     && mv nwnsc/nwnsc /usr/local/bin \
     && cd /tmp
 COPY --from=nwserver /nwn/data /nwn/data
-ENTRYPOINT ["nwnsc -n /nwn/data"]
+ENTRYPOINT ["nwnsc", "-n", "/nwn/data"]
 CMD ["*.nss"]
