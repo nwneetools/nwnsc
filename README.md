@@ -1,16 +1,20 @@
 nwnsc script compiler
 
-
 Binaries Avaialble - https://neverwintervault.org/project/nwn1/other/tool/nwnsc-nwn-enhanced-edition-script-compiler
 
----------------------------------------
+Docker image: glorwinger/nwnsc
+To compile all nss in current directory with a container, run
+
+```
+docker run --rm -it -v "$(pwd):/tmp" glorwinger/nwnsc
+```
+
+Further runtime arguments to nwnsc can be given at the end, including targets.
+
+---
 
 This source release includes libraries to read and manipulate various
 NWN-related data formats.
-
-
-
-
 
 
 The project is laid out into several different components:
