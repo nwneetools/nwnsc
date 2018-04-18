@@ -1,23 +1,16 @@
 FROM beamdog/nwserver:latest as nwserver
 
-FROM ubuntu:latest
+FROM phusion/holy-build-box-32:latest as nwnsc
 LABEL maintainers "jakobknutsen@gmail.com & glorwinger"
 WORKDIR /tmp
 COPY ./ ./nwnsc/
-RUN buildDeps="build-essential cmake bison" \
-    && runDeps="g++-multilib" \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends $buildDeps $runDeps \
+RUN buildDeps="bison" \
+    && yum install $buildDeps -y \
     && cd nwnsc \
-    && cmake . \
+    && /hbb_exe/activate-exec bash -x -c 'cmake /tmp/nwnsc' \
     && make \
     && mv nwnsc/nwnsc /usr/local/bin \
-    && cd /tmp \
-    && rm -rf /tmp/* \
-    && apt-get purge $buildDeps -y \
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -r /var/lib/apt/lists /var/cache/apt
+    && cd /tmp
 COPY --from=nwserver /nwn/data /nwn/data
-ENTRYPOINT ["nwnsc"]
+ENTRYPOINT ["nwnsc -n /nwn/data"]
 CMD ["*.nss"]
