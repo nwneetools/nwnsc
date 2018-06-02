@@ -1253,7 +1253,7 @@ NscCompiler::LoadResource (
 		{
 			*pulSize     = it ->second .Size;
 			*pfAllocated = false;
-			g_Resources.insert(it->second.Location);
+			//g_Resources.insert(it->second.Location);
 			return it ->second .Contents;
 		}
 	}
@@ -1293,8 +1293,10 @@ NscCompiler::LoadResource (
 			{
 				m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s\n", res.c_str());
 			}
+
 			if (m_GenerateMakeDeps)
 			{
+				LOG(DEBUG) << "Resource Path " << *it;
 			    // ignore .bif files when adding dependencies
                 if (OsCompat::dirExists(std::string (*it).c_str())) {
                     g_Resources.insert(res);
@@ -1473,7 +1475,9 @@ NscCompiler::LoadResource (
 	if (m_GenerateMakeDeps)
 	{
 		// ignore .bif files when adding dependencies
+        LOG(DEBUG) << "Accessor Path " << AccessorName;
 		if (OsCompat::dirExists(AccessorName.c_str())) {
+		    LOG(DEBUG) << "MakeDeps Added " << res;
 			g_Resources.insert(res);
 		}
 	}

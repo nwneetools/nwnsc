@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "Precomp.h"
 #include "OsCompat.h"
+#include "easylogging++.h"
 
 std::string
 OsCompat::getFileExt(const std::string& s) {
@@ -66,10 +67,16 @@ int OsCompat::dirExists(const char *path)
 {
     struct stat info;
 
-    if(stat( path, &info ) != 0)
+    if(stat( path, &info ) != 0) {
+        LOG(DEBUG) << "Bad Path";
         return 0;
-    else if(info.st_mode & S_IFDIR)
+    }
+    else if(info.st_mode & S_IFDIR) {
+        LOG(DEBUG) << "Is a dir";
         return 1;
-    else
+    }
+    else {
+        LOG(DEBUG) << "Is not a dir";
         return 0;
+    }
 }
