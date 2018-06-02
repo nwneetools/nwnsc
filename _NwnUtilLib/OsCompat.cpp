@@ -2,6 +2,7 @@
 // Created by Kevin Sheehan on 2/10/18.
 //
 
+#include <sys/stat.h>
 #include "Precomp.h"
 #include "OsCompat.h"
 
@@ -59,4 +60,16 @@ std::string OsCompat::ReplaceAll(std::string str, const std::string& from, const
         start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
+}
+
+int OsCompat::dirExists(const char *path)
+{
+    struct stat info;
+
+    if(stat( path, &info ) != 0)
+        return 0;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
 }
