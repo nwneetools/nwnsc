@@ -1295,7 +1295,10 @@ NscCompiler::LoadResource (
 			}
 			if (m_GenerateMakeDeps)
 			{
-				g_Resources.insert(res);
+			    // ignore .bif files when adding dependencies
+                if (OsCompat::dirExists(std::string (*it).c_str())) {
+                    g_Resources.insert(res);
+                }
 			}
 			//
 			// Try to cache the resource for next time around.
@@ -1451,9 +1454,9 @@ NscCompiler::LoadResource (
 	}
 
 	std::string res = "";
+	std::string AccessorName;
 	try
 	{
-		std::string AccessorName;
 		m_ResourceManager.GetResourceAccessorName(Handle, AccessorName);
 		res = AccessorName + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
 	}
@@ -1469,7 +1472,10 @@ NscCompiler::LoadResource (
 
 	if (m_GenerateMakeDeps)
 	{
-		g_Resources.insert(res);
+		// ignore .bif files when adding dependencies
+		if (OsCompat::dirExists(AccessorName.c_str())) {
+			g_Resources.insert(res);
+		}
 	}
 	//
 	// Close the file out and we're done.
