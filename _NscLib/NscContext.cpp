@@ -786,6 +786,11 @@ get_next_token:;
 								*pszOut++ = '\n';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
+							else if (c == '"')
+                            {
+                                *pszOut++ = '\"';
+                                m_pStreamTop ->pszNextTokenPos++;
+                            }
 							else
 								;
 						}
@@ -1481,8 +1486,7 @@ void CNscContext::GenerateMessage (NscMessage nMessage, ...)
 
 		case NscMessage_WarningInvalidCharacter:
 			{
-				char c = va_arg (marker, char);
-
+			    char c = (char)va_arg(marker, int);
 				GenerateWarning ("%sInvalid character '%c' (0x%02X) "
 					"found in source, ignored", szPrefix, c, c);
 			}
