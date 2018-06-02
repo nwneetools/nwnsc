@@ -296,7 +296,16 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	CNscContext sCtx (pCompiler);
 	sCtx .SetLoader (pLoader);
 	sCtx .LoadSymbolTable (&pCompiler ->NscGetCompilerState () ->m_sNscNWScript);
-	if (pErrorOutput)
+    sCtx.SetDisableDoubleQuoteEscape(false);
+
+	if (nVersion < 174) {
+		sCtx.SetDisableDoubleQuoteEscape(true);
+	}
+    if ((ulCompilerFlags & NscCompilerFlag_DisableDoubleQuote) != 0) {
+        sCtx.SetDisableDoubleQuoteEscape(true);
+	}
+
+    if (pErrorOutput)
 	{
 		sCtx. SetErrorOutputStream(pErrorOutput);
 	}
@@ -563,7 +572,7 @@ int yylex (YYSTYPE* yylval) {
 NscCompiler::NscCompiler (
 	 ResourceManager & ResMan,
 	 bool EnableExtensions,
-	 bool SaveSymbolTable /* = false */
+	 bool SaveSymbolTable
 	)
 : m_ResourceManager (ResMan),
   m_EnableExtensions (EnableExtensions),
@@ -730,7 +739,7 @@ NscCompiler::NscCompileScript (
     m_SuppressWarnings = (CompilerFlags & NscCompilerFlag_SuppressWarnings) != 0;
     m_CompilerState->m_SuppressWarnings = m_SuppressWarnings;
 
-	Result = NscCompileScript (ScriptName,
+    Result = NscCompileScript (ScriptName,
 		(FileSize != 0) ? &FileContents [0] : NULL,
 		FileContents.size (),
 		CompilerVersion,

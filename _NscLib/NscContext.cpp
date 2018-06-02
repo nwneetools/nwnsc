@@ -130,6 +130,7 @@ CNscContext::CNscContext (NscCompiler *pCompiler)
 	m_nMaxTokenLength = Max_Line_Length - 1;
 	m_nMaxFunctionParameterCount = INT_MAX;
 	m_nMaxIdentifierCount = INT_MAX;
+	m_DisableDoubleQuoteEscape = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -786,7 +787,7 @@ get_next_token:;
 								*pszOut++ = '\n';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
-							else if (c == '"')
+							else if (c == '"' && !m_DisableDoubleQuoteEscape)
                             {
                                 *pszOut++ = '\"';
                                 m_pStreamTop ->pszNextTokenPos++;

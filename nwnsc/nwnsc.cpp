@@ -2050,6 +2050,10 @@ Environment:
                             CompilerFlags |= NscCompilerFlag_GenerateMakeDeps;
                             break;
 
+                        case 'Q':
+                            CompilerFlags |= NscCompilerFlag_DisableDoubleQuote;
+                            break;
+
                         default: {
                             g_TextOut.WriteText("Error: Unrecognized option \"%c\".\n", Switch);
                             Error = true;
@@ -2141,7 +2145,8 @@ Environment:
                         "  -v - Version and detailed usage message\n"
                         "  -w - Suppress compile warnings (default: false)\n"
                         "  -y - Continue processing input files even on error\n"
-                        "  -M - Create makefile dependency (.d) files\n\n"
+                        "  -M - Create makefile dependency (.d) files\n"
+                        "  -Q - Disable the parsing of \\\" (added in NWN EE build 8176) \n\n"
                         "  The Compiler requires the nwscript.nss from the game resources. The following order\n"
                         "      will be followed to find the file. The search stops on the first match.\n"
                         "    1. -i pathspec  The pathspec will be searched as the game scipts may\n"
