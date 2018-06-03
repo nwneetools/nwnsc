@@ -93,6 +93,7 @@ struct NscCompilerState
 	bool                          m_fEnableExtensions;
 	bool                          m_fSaveSymbolTable;
 	bool 						  m_SuppressWarnings;
+	bool						  m_EnableDoubleQuoteEscape;
 
 	inline
 	NscCompilerState(
@@ -1074,6 +1075,14 @@ public:
 		m_nMaxIdentifierCount = nMaxIdentifierCount;
 	}
 
+	void SetDisableDoubleQuoteEscape (bool DisableDoubleQuoteEscape) {
+		m_DisableDoubleQuoteEscape = DisableDoubleQuoteEscape;
+	}
+
+	bool GetDisableDoubleQuoteEscape () {
+		return m_DisableDoubleQuoteEscape;
+	}
+
 	void SetSuppressWarnings (bool mSuppressWarnings) {
 		m_SuppressWarnings = mSuppressWarnings;
 	}
@@ -1897,6 +1906,10 @@ protected:
 	// @cmember Maximum number of identifiers allowed.
 
 	int						m_nMaxIdentifierCount;
+
+	// @cmember disable String escape of Double Quote.
+
+	int						m_DisableDoubleQuoteEscape;
 };
 
 #endif // ETS_NSCCONTEXT_H

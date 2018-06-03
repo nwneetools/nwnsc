@@ -163,6 +163,7 @@ public:
     static char *filename(const char *str);
     char * extname(const char *str);
     static std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
-    };
+    static int dirExists(const char *path);
+};
 
 #endif //NWN_TOOLS_OSCOMPAT_H

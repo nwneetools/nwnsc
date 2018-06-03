@@ -818,7 +818,7 @@ protected:
 
 	static void CallDestructors (TClass *pElements, size_t nElements)
 	{
-		pElements; // get rid of 4100 warning
+		//pElements; // get rid of 4100 warning
 		for (size_t iElement = 0; iElement < nElements; iElement++)
 			pElements [iElement] .~TClass ();
 	}

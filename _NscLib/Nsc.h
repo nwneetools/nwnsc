@@ -146,6 +146,7 @@ enum NscCompilerFlags
 	NscCompilerFlag_StrictModeEnabled	= 0x00000008,
 	NscCompilerFlag_GenerateMakeDeps	= 0x00000010,
     NscCompilerFlag_SuppressWarnings   	= 0x00000020,
+    NscCompilerFlag_DisableDoubleQuote  = 0x00000040,
 };
 
 //-----------------------------------------------------------------------------

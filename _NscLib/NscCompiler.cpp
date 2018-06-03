@@ -296,7 +296,16 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	CNscContext sCtx (pCompiler);
 	sCtx .SetLoader (pLoader);
 	sCtx .LoadSymbolTable (&pCompiler ->NscGetCompilerState () ->m_sNscNWScript);
-	if (pErrorOutput)
+    sCtx.SetDisableDoubleQuoteEscape(false);
+
+	if (nVersion < 174) {
+		sCtx.SetDisableDoubleQuoteEscape(true);
+	}
+    if ((ulCompilerFlags & NscCompilerFlag_DisableDoubleQuote) != 0) {
+        sCtx.SetDisableDoubleQuoteEscape(true);
+	}
+
+    if (pErrorOutput)
 	{
 		sCtx. SetErrorOutputStream(pErrorOutput);
 	}
@@ -563,7 +572,7 @@ int yylex (YYSTYPE* yylval) {
 NscCompiler::NscCompiler (
 	 ResourceManager & ResMan,
 	 bool EnableExtensions,
-	 bool SaveSymbolTable /* = false */
+	 bool SaveSymbolTable
 	)
 : m_ResourceManager (ResMan),
   m_EnableExtensions (EnableExtensions),
@@ -730,7 +739,7 @@ NscCompiler::NscCompileScript (
     m_SuppressWarnings = (CompilerFlags & NscCompilerFlag_SuppressWarnings) != 0;
     m_CompilerState->m_SuppressWarnings = m_SuppressWarnings;
 
-	Result = NscCompileScript (ScriptName,
+    Result = NscCompileScript (ScriptName,
 		(FileSize != 0) ? &FileContents [0] : NULL,
 		FileContents.size (),
 		CompilerVersion,
@@ -1253,7 +1262,7 @@ NscCompiler::LoadResource (
 		{
 			*pulSize     = it ->second .Size;
 			*pfAllocated = false;
-			g_Resources.insert(it->second.Location);
+			//g_Resources.insert(it->second.Location);
 			return it ->second .Contents;
 		}
 	}
@@ -1293,9 +1302,14 @@ NscCompiler::LoadResource (
 			{
 				m_ErrorOutput->WriteText ("ShowIncludes: Handled resource %s\n", res.c_str());
 			}
+
 			if (m_GenerateMakeDeps)
 			{
-				g_Resources.insert(res);
+				LOG(DEBUG) << "Resource Path " << *it;
+			    // ignore .bif files when adding dependencies
+                if (OsCompat::dirExists(std::string (*it).c_str())) {
+                    g_Resources.insert(res);
+                }
 			}
 			//
 			// Try to cache the resource for next time around.
@@ -1451,9 +1465,9 @@ NscCompiler::LoadResource (
 	}
 
 	std::string res = "";
+	std::string AccessorName;
 	try
 	{
-		std::string AccessorName;
 		m_ResourceManager.GetResourceAccessorName(Handle, AccessorName);
 		res = AccessorName + "/" + pszName + "." + m_ResourceManager.ResTypeToExt(nResType);
 	}
@@ -1469,7 +1483,12 @@ NscCompiler::LoadResource (
 
 	if (m_GenerateMakeDeps)
 	{
-		g_Resources.insert(res);
+		// ignore .bif files when adding dependencies
+        LOG(DEBUG) << "Accessor Path " << AccessorName;
+		if (OsCompat::dirExists(AccessorName.c_str())) {
+		    LOG(DEBUG) << "MakeDeps Added " << res;
+			g_Resources.insert(res);
+		}
 	}
 	//
 	// Close the file out and we're done.
