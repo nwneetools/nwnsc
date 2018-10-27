@@ -6,7 +6,7 @@ Docker image: glorwinger/nwnsc
 To compile all nss in current directory with a container, run
 
 ```
-docker run --rm -it -v "$(pwd):/tmp" glorwinger/nwnsc
+docker run --rm -it -v "$(pwd):/tmp" jakkn/nwnsc
 ```
 
 Further runtime arguments to nwnsc can be given at the end, including targets.
