@@ -4,6 +4,5 @@ build:
   stage: build
   image: glorwinger/holy-build-box-32:1.0.0
   script:
-    - /hbb_exe/activate-exec
-    - cmake .
-    - make all
+    - /hbb_exe/activate-exec; cmake .; make all
+
