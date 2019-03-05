@@ -2,7 +2,7 @@ stages:
   - build
 build:
   stage: build
-  image: glorwinger/holy-build-box-32:1.1.0
+  image: phusion/holy-build-box-32:2.0.1
   script:
     - /hbb_exe/activate-exec
     - cmake .
