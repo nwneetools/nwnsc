@@ -5,7 +5,9 @@ build:
   image: glorwinger/holy-build-box-32:2.0.0
   script:
     - /hbb_exe/activate-exec
-    - scl enable devtoolset-7 bash
+    - export CC=/opt/centos/devtoolset-7/root/usr/bin/gcc  
+    - export CPP=/opt/centos/devtoolset-7/root/usr/bin/cpp
+    - export CXX=/opt/centos/devtoolset-7/root/usr/bin/c++
     - cmake .
     - make all
 
