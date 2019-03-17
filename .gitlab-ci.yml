@@ -5,6 +5,7 @@ build:
   image: glorwinger/holy-build-box-32:2.0.0
   script:
     - /hbb_exe/activate-exec
+    - scl enable devtoolset-7 bash
     - cmake .
     - make all
 
