@@ -10,4 +10,7 @@ build:
     - export CXX=/opt/rh/devtoolset-7/root/usr/bin/c++
     - cmake .
     - make all
+artifacts:
+  paths:
+    - nwnsc/*.exe
 
