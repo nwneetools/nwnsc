@@ -12,5 +12,5 @@ build:
     - make all
   artifacts:
     paths:
-      - nwnsc/*.exe
+      - nwnsc/nwnsc
 
