@@ -1,0 +1,16 @@
+stages:
+  - build
+build:
+  stage: build
+  image: glorwinger/holy-build-box-32:2.0.0
+  script:
+    - /hbb_exe/activate-exec
+    - export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc  
+    - export CPP=/opt/rh/devtoolset-7/root/usr/bin/cpp
+    - export CXX=/opt/rh/devtoolset-7/root/usr/bin/c++
+    - cmake .
+    - make all
+  artifacts:
+    paths:
+      - nwnsc/nwnsc
+
