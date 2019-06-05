@@ -333,7 +333,7 @@ Environment:
 #if defined(__APPLE__)
                 SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
 #elif defined(__linux__)
-                SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
+                SteamRootDir = GetHomeDirectory() + "/.local/share/Steam/steamapps/common/Neverwinter Nights/";
 #elif defined(_WINDOWS)
                 SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
 #endif
