@@ -38,6 +38,7 @@
 //      
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include "Precomp.h"
 #include "Nsc.h"
 #include "NscContext.h"
@@ -105,7 +106,7 @@ bool NscCompilerInitialize (CNwnLoader *pLoader, int nVersion,
 	//
 
 	pCompiler ->NscGetCompilerState () ->m_nNscActionCount = 0;
-	pCompiler ->NscGetCompilerState () ->m_anNscActions .RemoveAll ();
+	pCompiler ->NscGetCompilerState () ->m_anNscActions .clear ();
 	pCompiler ->NscGetCompilerState () ->m_sNscReservedWords .Reset ();
 	pCompiler ->NscGetCompilerState () ->m_sNscNWScript .Reset ();
 

@@ -49,6 +49,7 @@
 
 //#include <cassert>
 //#include <stack>
+#include <vector>
 #include "NscContext.h"
 
 //-----------------------------------------------------------------------------
@@ -459,15 +460,15 @@ protected:
 
 	// @cmember List of functions needed
 
-	CNwnArray <size_t>		m_anFunctions;
+	std::vector <size_t>	m_anFunctions;
 
 	// @cmember List of the currently defined variables
 
-	CNwnArray <size_t>		m_anVariables;
+	std::vector <size_t>	m_anVariables;
 
 	// @cmember List of the local variables
 
-	CNwnArray <size_t>		m_anLocalVars;
+	std::vector <size_t>	m_anLocalVars;
 
 	// @cmember New symbol table for just local variables
 
@@ -481,7 +482,7 @@ protected:
 
 	// @cmember List of the lines
 
-	CNwnArray <Line>		m_asLines;
+	std::vector <Line>		m_asLines;
 
 	// @cmember Stack of entered into function symbols for GatherUsed.
 
