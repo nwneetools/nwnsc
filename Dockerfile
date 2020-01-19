@@ -4,7 +4,10 @@ LABEL maintainers "jakobknutsen@gmail.com"
 FROM phusion/holy-build-box-32:latest as nwnsc
 COPY ./ /tmp/nwnsc/
 WORKDIR /tmp/nwnsc
-RUN yum install bison -y
+# Do what we can to update package checksums, because the parent image tends to be outdated
+RUN yum install -y yum-plugin-ovl python-hashlib
+# Install the actual build deps
+RUN yum install -y bison
 RUN /hbb_exe/activate-exec bash -x -c 'cmake . && make all'
 
 FROM i386/ubuntu:latest
