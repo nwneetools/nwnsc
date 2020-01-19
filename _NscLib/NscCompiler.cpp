@@ -296,13 +296,13 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	CNscContext sCtx (pCompiler);
 	sCtx .SetLoader (pLoader);
 	sCtx .LoadSymbolTable (&pCompiler ->NscGetCompilerState () ->m_sNscNWScript);
-    sCtx.SetDisableDoubleQuoteEscape(false);
+    sCtx.SetDisableNwnEeEscape(false);
 
 	if (nVersion < 174) {
-		sCtx.SetDisableDoubleQuoteEscape(true);
+		sCtx.SetDisableNwnEeEscape(true);
 	}
     if ((ulCompilerFlags & NscCompilerFlag_DisableDoubleQuote) != 0) {
-        sCtx.SetDisableDoubleQuoteEscape(true);
+        sCtx.SetDisableNwnEeEscape(true);
 	}
 
     if (pErrorOutput)

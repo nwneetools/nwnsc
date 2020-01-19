@@ -130,7 +130,7 @@ CNscContext::CNscContext (NscCompiler *pCompiler)
 	m_nMaxTokenLength = Max_Line_Length - 1;
 	m_nMaxFunctionParameterCount = INT_MAX;
 	m_nMaxIdentifierCount = INT_MAX;
-	m_DisableDoubleQuoteEscape = false;
+	m_DisableNwnEeEscape = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -777,6 +777,7 @@ get_next_token:;
 
 							pEntry ->PushConstantString (pszStart, nSize);
 							*yylval = pEntry;
+
 							return STRING_CONST;
 						}
 						else if (c == '\\')
@@ -787,11 +788,16 @@ get_next_token:;
 								*pszOut++ = '\n';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
-							else if (c == '"' && !m_DisableDoubleQuoteEscape)
+							else if (c == '"' && !m_DisableNwnEeEscape)
                             {
-                                *pszOut++ = '\"';
+                                *pszOut++ = '"';
                                 m_pStreamTop ->pszNextTokenPos++;
                             }
+							else if (c == '\\' && !m_DisableNwnEeEscape)
+							{
+								*pszOut++ = '\\';
+								m_pStreamTop ->pszNextTokenPos++;
+							}
 							else
 								;
 						}
@@ -802,7 +808,7 @@ get_next_token:;
 							pEntry ->PushConstantString (pszStart, (int) (pszOut - pszStart));
 							*yylval = pEntry;
 							GenerateMessage (NscMessage_ErrorUnterminatedString);
-							return STRING_CONST; 
+                            return STRING_CONST;
 						}
 						else
 							*pszOut++ = c;

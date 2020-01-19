@@ -1075,12 +1075,12 @@ public:
 		m_nMaxIdentifierCount = nMaxIdentifierCount;
 	}
 
-	void SetDisableDoubleQuoteEscape (bool DisableDoubleQuoteEscape) {
-		m_DisableDoubleQuoteEscape = DisableDoubleQuoteEscape;
+	void SetDisableNwnEeEscape (bool DisableNwnEeEscape) {
+		m_DisableNwnEeEscape = DisableNwnEeEscape;
 	}
 
-	bool GetDisableDoubleQuoteEscape () {
-		return m_DisableDoubleQuoteEscape;
+	bool GetDisableNwnEeEscape () {
+		return m_DisableNwnEeEscape;
 	}
 
 	void SetSuppressWarnings (bool mSuppressWarnings) {
@@ -1907,9 +1907,9 @@ protected:
 
 	int						m_nMaxIdentifierCount;
 
-	// @cmember disable String escape of Double Quote.
+	// @cmember disable String escapes added in NWN EE.
 
-	int						m_DisableDoubleQuoteEscape;
+	int						m_DisableNwnEeEscape;
 };
 
 #endif // ETS_NSCCONTEXT_H
