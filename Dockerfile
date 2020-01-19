@@ -1,16 +1,11 @@
 FROM beamdog/nwserver:latest as nwserver
+LABEL maintainers "jakobknutsen@gmail.com"
 
 FROM phusion/holy-build-box-32:latest as nwnsc
-LABEL maintainers "jakobknutsen@gmail.com & glorwinger"
-WORKDIR /tmp
-COPY ./ ./nwnsc/
-RUN buildDeps="bison" \
-    && yum install $buildDeps -y \
-    && cd nwnsc \
-    && /hbb_exe/activate-exec bash -x -c 'cmake /tmp/nwnsc' \
-    && make \
-    && mv nwnsc/nwnsc /usr/local/bin \
-    && cd /tmp
+COPY ./ /tmp/nwnsc/
+WORKDIR /tmp/nwnsc
+RUN yum install bison -y
+RUN /hbb_exe/activate-exec bash -x -c 'cmake . && make all'
 COPY --from=nwserver /nwn/data /nwn/data
 ENTRYPOINT ["nwnsc", "-n", "/nwn/data"]
 CMD ["*.nss"]
