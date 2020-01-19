@@ -11,5 +11,5 @@ FROM i386/ubuntu:latest
 COPY --from=nwnsc /tmp/nwnsc/nwnsc/ /usr/local/bin/
 COPY --from=nwserver /nwn/data /nwn/data
 WORKDIR /tmp
-ENTRYPOINT ["nwnsc", "-n", "/nwn/data"]
+ENTRYPOINT ["nwnsc", "-on", "/nwn/data"]
 CMD ["*.nss"]
