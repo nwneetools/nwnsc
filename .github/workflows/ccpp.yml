@@ -9,12 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        uses: docker://phusion/holy-build-box-32:2.0.0
-        with:
-          entrypoint: /bin/sh
-          args: "-c linux32 bash /hbb_exe/activate-exec
-            export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc
-            export CPP=/opt/rh/devtoolset-7/root/usr/bin/cpp
-            export CXX=/opt/rh/devtoolset-7/root/usr/bin/c++
-            cmake .
-            make all"
+        uses: docker://nwneetools/nwnsc-docker-builder:6c46710f
