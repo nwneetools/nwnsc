@@ -7,8 +7,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: cmake
-        run: cmake .
-      - name: make
-        run: make all
+      - name: Build
+        uses: docker://phusion/holy-build-box-32:2.0.0
+        with:
+          entrypoint: /bin/sh
+          args: "-c linux32 bash /hbb_exe/activate-exec
+            export CC=/opt/rh/devtoolset-7/root/usr/bin/gcc
+            export CPP=/opt/rh/devtoolset-7/root/usr/bin/cpp
+            export CXX=/opt/rh/devtoolset-7/root/usr/bin/c++
+            cmake .
+            make all"
