@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: Build
         uses: docker://phusion/holy-build-box-32:2.0.0
         with:
