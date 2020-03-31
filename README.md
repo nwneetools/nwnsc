@@ -1,3 +1,5 @@
+# Readme contains outdated information. Update in progress.
+
 nwnsc script compiler
 
 Binaries Avaialble - https://neverwintervault.org/project/nwn1/other/tool/nwnsc-nwn-enhanced-edition-script-compiler
