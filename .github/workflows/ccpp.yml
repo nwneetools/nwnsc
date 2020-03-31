@@ -1,0 +1,12 @@
+name: C/C++ CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        uses: docker://nwneetools/nwnsc-docker-builder:6c46710f
