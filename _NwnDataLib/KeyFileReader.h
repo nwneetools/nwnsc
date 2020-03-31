@@ -189,25 +189,25 @@ private:
 #pragma pack (1)
 	typedef struct _KEY_HEADER
 	{
-		unsigned long FileType;                // "KEY "
-		unsigned long FileVersion;             // "V1  "
-		unsigned long BIFCount;                // # of BIF files indexed by this KEY file
-		unsigned long KeyCount;                // # of resources in all BIF files indexed
-		unsigned long OffsetToFileTable;       // from beginning of file
-		unsigned long OffsetToKeyTable;        // from beginning of file
-		unsigned long BuildYear;               // Since 1900
-		unsigned long BuildDay;                // Since January 1
-		unsigned char Reserved[ 32 ];          // Reserved for future use [MBZ]
+		uint32_t FileType;                // "KEY "
+		uint32_t FileVersion;             // "V1  "
+		uint32_t BIFCount;                // # of BIF files indexed by this KEY file
+		uint32_t KeyCount;                // # of resources in all BIF files indexed
+		uint32_t OffsetToFileTable;       // from beginning of file
+		uint32_t OffsetToKeyTable;        // from beginning of file
+		uint32_t BuildYear;               // Since 1900
+		uint32_t BuildDay;                // Since January 1
+		uint8_t  Reserved[ 32 ];          // Reserved for future use [MBZ]
 	} KEY_HEADER, * PKEY_HEADER;
 
 	typedef const struct _KEY_HEADER * PCKEY_HEADER;
 
 	typedef struct _KEY_FILE
 	{
-		unsigned long  FileSize;               // Size of the BIF on disk
-		unsigned long  FilenameOffset;         // from beginning of file (in FileNameTable)
-		unsigned short FilenameSize;           // Size of filename in characters
-		unsigned short Drives;                 // Bitmask of drives applicable (0x1 -> install directory)
+		uint32_t  FileSize;               // Size of the BIF on disk
+		uint32_t  FilenameOffset;         // from beginning of file (in FileNameTable)
+		uint16_t   FilenameSize;           // Size of filename in characters
+		uint16_t   Drives;                 // Bitmask of drives applicable (0x1 -> install directory)
 	} KEY_FILE, * PKEY_FILE;
 
 	typedef const struct _KEY_FILE * PCKEY_FILE;
@@ -216,7 +216,7 @@ private:
 	{
 		ResRefT       ResRef;
 		ResType       ResourceType;
-		unsigned long ResID;                   // Bits 0-19 -> BIF file index (within BIF's resource table), bits 20-31 -> BIF index (within key file table)
+		uint32_t      ResID;                   // Bits 0-19 -> BIF file index (within BIF's resource table), bits 20-31 -> BIF index (within key file table)
 	} KEY_RESOURCE, * PKEY_RESOURCE;
 
 	//typedef const struct _KEY_FILE * PCKEY_FILE;

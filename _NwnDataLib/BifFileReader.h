@@ -175,21 +175,21 @@ private:
 #pragma pack (1)
 	typedef struct _BIF_HEADER
 	{
-		unsigned long FileType;                // "BIFF"
-		unsigned long Version;                 // "V1.0"
-		unsigned long VariableResourceCount;   // # of variable resources in the file
-		unsigned long LocalizedStringSize;     // # of fixed resources in the file
-		unsigned long VariableTableOffset;     // from beginning of file
+		uint32_t FileType;                // "BIFF"
+		uint32_t Version;                 // "V1.0"
+		uint32_t VariableResourceCount;   // # of variable resources in the file
+		uint32_t LocalizedStringSize;     // # of fixed resources in the file
+		uint32_t VariableTableOffset;     // from beginning of file
 	} BIF_HEADER, * PBIF_HEADER;
 
 	typedef const struct _BIF_HEADER * PCBIF_HEADER;
 
 	typedef struct _BIF_RESOURCE
 	{
-		unsigned long  ID;
-		unsigned long  Offset;
-		unsigned long  FileSize;
-		unsigned long  ResourceType;
+		uint32_t  ID;
+		uint32_t  Offset;
+		uint32_t  FileSize;
+		uint32_t  ResourceType;
 	} BIF_RESOURCE, * PBIF_RESOURCE;
 
 	typedef const struct _BIF_RESOURCE * PCBIF_RESOURCE;

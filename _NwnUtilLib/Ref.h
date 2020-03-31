@@ -24,7 +24,7 @@ namespace swutil
 		)
 	{
 #ifdef _WIN64
-        return InterlockedIncrement64( Addened );
+        return InterlockedIncrement64( Addend );
 #elif _WIN32
 		return InterlockedIncrement( Addend );
 #else
@@ -42,7 +42,7 @@ namespace swutil
 		)
 	{
 #ifdef _WIN64
-        return InterlockedDecrement64( Addened );
+        return InterlockedDecrement64( Addend );
 #elif _WIN32
 		return InterlockedDecrement( Addend );
 #else
