@@ -47,9 +47,9 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include "../_NwnDataLib/NWNDataLib.h"
 #include "NwnStreams.h"
-#include "NwnArray.h"
 #include "NscPStackEntry.h"
 #include "NscSymbolTable.h"
 #define YYSTYPE CNscPStackEntry *
@@ -84,7 +84,7 @@ struct NscCompilerState
 {
 	CNscSymbolTable               m_sNscReservedWords;
 	int                           m_nNscActionCount;
-	CNwnArray <size_t>            m_anNscActions;
+	std::vector <size_t>          m_anNscActions;
 	CNscSymbolTable               m_sNscNWScript;
 	CNscSymbolTable               m_sNscLast;
 	CNscContext                 * m_pCtx;
@@ -437,7 +437,7 @@ public:
 
 	size_t GetGlobalVariableCount () const
 	{
-		return m_anGlobalVars .GetCount ();
+		return m_anGlobalVars .size ();
 	}
 
 	// @cmember Get the symbol for the n'th global variable
@@ -451,14 +451,14 @@ public:
 
 	void AddGlobalDefinition (size_t nOffset)
 	{
-		m_anGlobalDefs .Add (nOffset);
+		m_anGlobalDefs .push_back (nOffset);
 	}
 
 	// @cmember Get the global definition count
 
 	size_t GetGlobalDefinitionCount () const
 	{
-		return m_anGlobalDefs .GetCount ();
+		return m_anGlobalDefs .size ();
 	}
 
 	// @cmember Get the symbol for the n'th global definition
@@ -472,14 +472,14 @@ public:
 
 	void AddGlobalFunction (size_t nSymbol)
 	{
-		m_anGlobalFuncs .Add (nSymbol);
+		m_anGlobalFuncs .push_back (nSymbol);
 	}
 
 	// @cmember Get the global function count
 
 	size_t GetGlobalFunctionCount () const
 	{
-		return m_anGlobalFuncs .GetCount ();
+		return m_anGlobalFuncs .size ();
 	}
 
 	// @cmember Get the symbol for the n'th global function
@@ -632,7 +632,7 @@ public:
 		const char *pszFileName = pStream ->GetFileName ();
 		if (pszFileName)
 		{
-			pEntry ->nFile = (int) m_asFiles .GetCount ();
+			pEntry ->nFile = (int) m_asFiles .size ();
 			const char *pszBaseName = NwnBasename (pszFileName);
 			size_t nLength = strlen (pszBaseName);
 			char *pszCopy = (char *) alloca (nLength + 1);
@@ -641,14 +641,14 @@ public:
 			if (pszExt)
 				*pszExt = 0;
 			// In the NDB file, the main is lowercase...
-			if (m_asFiles .GetCount () == 0)
+			if (m_asFiles .size () == 0)
 				strlwr (pszCopy);
 			File sFile;
 			sFile .strName = pszCopy;
 			sFile .strFullName = pszFileName;
 			sFile .nOutputIndex = -1;
 			sFile .nFileIndex = -1;
-			m_asFiles .Add (sFile);
+			m_asFiles .push_back (sFile);
 		}
 		return;
 	}
@@ -672,7 +672,7 @@ public:
 
 	void ClearFiles ()
 	{
-		m_asFiles .RemoveAll ();
+		m_asFiles .clear ();
 	}
 
 	// @cmember Clear the current list of preprocessor defines
@@ -1446,7 +1446,7 @@ public:
 			return "NscIntrinsics.nss";
 
 		default:
-			assert ((size_t) nFile < m_asFiles .GetCount ());
+			assert ((size_t) nFile < m_asFiles .size ());
 			return m_asFiles [nFile] .strFullName .c_str ();
 
 		}
@@ -1785,19 +1785,19 @@ protected:
 
 	// @cmember Global variable array
 
-	CNwnArray <size_t>		m_anGlobalVars;
+	std::vector <size_t>	m_anGlobalVars;
 
 	// @cmember Global function array
 
-	CNwnArray <size_t>		m_anGlobalFuncs;
+	std::vector <size_t>	m_anGlobalFuncs;
 
 	// @cmember Global definitions
 
-	CNwnArray <size_t>		m_anGlobalDefs;
+	std::vector <size_t>	m_anGlobalDefs;
 
 	// @cmember List of included files
 
-	CNwnArray <File>		m_asFiles;
+	std::vector <File>		m_asFiles;
 
 	// @cmember Number of files actually included in the compiled script
 

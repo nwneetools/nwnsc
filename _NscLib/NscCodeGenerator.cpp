@@ -38,6 +38,7 @@
 //      
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include "Precomp.h"
 #include "Nsc.h"
 #include "NscPCodeEnumerator.h"
@@ -250,7 +251,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 	//
 
 	pSymbol ->ulFlags |= NscSymFlag_Referenced;
-	m_anFunctions .Add (m_pCtx ->GetSymbolOffset (pSymbol));
+	m_anFunctions .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
 	GatherUsed (pSymbol);
 	
 	//
@@ -556,7 +557,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 	//
 
 	m_fGlobalScope = false;
-	for (size_t i = 0; i < m_anFunctions .GetCount (); i++)
+	for (size_t i = 0; i < m_anFunctions .size (); i++)
 	{
 		if (m_pauchOut >= m_pauchCodeEnd)
 			break;
@@ -610,7 +611,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 		// Count the number of global variables
 		//
 
-		int nGlobalVariables = (int) m_anLocalVars .GetCount ();
+		int nGlobalVariables = (int) m_anLocalVars .size ();
 		for (size_t i = 0; i < m_pCtx ->GetGlobalVariableCount (); i++)
 		{
 			NscSymbol *pSymbol = m_pCtx ->GetGlobalVariable (i);
@@ -638,7 +639,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 			m_pCtx ->GetStructCount () + 1, 
 			nGlobalFunctions,
 			nGlobalVariables,
-			m_asLines .GetCount ());
+			m_asLines .size ());
 		pDebugOutput ->WriteLine (m_pachCode);
 
 		//
@@ -805,7 +806,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 		// Write the local variables list
 		//
 
-		for (size_t i = 0; i < m_anLocalVars .GetCount (); i++)
+		for (size_t i = 0; i < m_anLocalVars .size (); i++)
 		{
 			NscSymbol *pSymbol = m_sLocalSymbols .GetSymbol (m_anLocalVars [i]);
 			GetDebugTypeText (pSymbol ->nType, szType);
@@ -819,7 +820,7 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 		// Write the lines
 		//
 
-		for (size_t i = 0; i < m_asLines .GetCount (); i++)
+		for (size_t i = 0; i < m_asLines .size (); i++)
 		{
 			sprintf (m_pachCode, "l%02d %07d %08x %08x",
 				m_asLines [i] .nFile, m_asLines [i] .nLine,
@@ -1066,7 +1067,7 @@ void CNscCodeGenerator::GatherUsed (unsigned char *pauchData, size_t nDataSize)
 				NscSymbolFunctionExtra *pExtra = (NscSymbolFunctionExtra *)
 					m_pCtx ->GetSymbolData (pSymbol ->nExtra);
 
-				m_anFunctions .Add (pCall ->nFnSymbol);				
+				m_anFunctions .push_back (pCall ->nFnSymbol);
 				pSymbol ->ulFlags |= NscSymFlag_Referenced;
 				GatherUsed (pSymbol);
 
@@ -2620,7 +2621,7 @@ bool CNscCodeGenerator::CodeRoutine (const char *pszName, NscType nRetType,
 			NscSymbol *pSymbol = AddLocalVariable ("#retval", nRetType);
 			pSymbol ->nCompiledStart = m_pauchOut - m_pauchCode;
 			pSymbol ->nStackOffset = 0;
-			m_anVariables .Add (m_pCtx ->GetSymbolOffset (pSymbol));
+			m_anVariables .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
 			pReturnSymbol = pSymbol;
 		}
 
@@ -2663,7 +2664,7 @@ bool CNscCodeGenerator::CodeRoutine (const char *pszName, NscType nRetType,
 				NscSymbol *pSymbol = AddLocalVariable (pszString, pArg ->nType);
 				pSymbol ->nCompiledStart = m_pauchOut - m_pauchCode;
 				pSymbol ->nStackOffset = nOffset;
-				m_anVariables .Add (m_pCtx ->GetSymbolOffset (pSymbol));
+				m_anVariables .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
 				nOffset += m_pCtx ->GetTypeSize (pArg ->nType);
 			}
 		}
@@ -2811,7 +2812,7 @@ bool CNscCodeGenerator::CodeData (unsigned char *pauchData, size_t nDataSize)
 							pDecl ->szString, pDecl ->nType);
 						pSymbol ->nCompiledStart = nOffset;
 						pSymbol ->nStackOffset = nDepth;
-						m_anVariables .Add (m_pCtx ->GetSymbolOffset (pSymbol));
+						m_anVariables .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
 					}
 				}
 				break;
@@ -4253,7 +4254,7 @@ void CNscCodeGenerator::GetDebugTypeText (NscType nType, char *pszText)
 void CNscCodeGenerator::PurgeVariables (int nDepth)
 {
 	int nRemove = 0;
-	size_t nIndex = m_anVariables .GetCount ();
+	size_t nIndex = m_anVariables .size ();
 	while (nIndex > 0)
 	{
 		NscSymbol *pSymbol = m_pCtx ->GetSymbol (m_anVariables [nIndex - 1]);
@@ -4266,7 +4267,13 @@ void CNscCodeGenerator::PurgeVariables (int nDepth)
 			break;
 		nIndex--;
 	}
-	m_anVariables .RemoveAt (nIndex, nRemove);
+	std::vector<size_t>::iterator from = m_anVariables.begin();
+	std::vector<size_t>::iterator to   = m_anVariables.begin();
+
+	std::advance(from, nIndex);
+	std::advance(to  , nIndex + nRemove);
+
+	m_anVariables.erase(from, to);
 }
 
 //-----------------------------------------------------------------------------
@@ -4303,7 +4310,7 @@ NscSymbol *CNscCodeGenerator::AddLocalVariable (
 	// Add the variable to the global variable list
 	//
 
-	m_anLocalVars .Add (nSymbol);
+	m_anLocalVars .push_back (nSymbol);
 	return pSymbol;
 }
 
@@ -4337,7 +4344,7 @@ void CNscCodeGenerator::AddLine (int nFile, int nLine,
 	// If the last line is already added
 	//
 
-	int nLast = ((int) m_asLines .GetCount ()) - 1;
+	int nLast = ((int) m_asLines .size ()) - 1;
 	if (nLast >= 0 &&
 		m_asLines [nLast] .nFile == nFile &&
 		m_asLines [nLast] .nLine == nLine)
@@ -4352,7 +4359,7 @@ void CNscCodeGenerator::AddLine (int nFile, int nLine,
 	sLine .nLine = nLine;
 	sLine .nCompiledStart = nCompiledStart;
 	sLine .nCompiledEnd = nCompiledEnd;
-	m_asLines .Add (sLine);
+	m_asLines .push_back (sLine);
 }
 
 //-----------------------------------------------------------------------------

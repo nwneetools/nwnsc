@@ -38,6 +38,7 @@
 //      
 //-----------------------------------------------------------------------------
 
+#include <vector>
 #include "Precomp.h"
 #include "Nsc.h"
 #include "NscContext.h"
@@ -1836,7 +1837,7 @@ try_again:;
 				//
 
 				size_t i;
-				for (i = 0; i < m_asFiles .GetCount (); i++)
+				for (i = 0; i < m_asFiles .size (); i++)
 				{
 					if (stricmp (m_asFiles [i] .strName .c_str (), pszTemp) == 0)
 						break;
@@ -1846,7 +1847,7 @@ try_again:;
 				// If this isn't a duplicate
 				//
 
-				if (i >= m_asFiles .GetCount ())
+				if (i >= m_asFiles .size ())
 				{
 
 					//
@@ -3517,8 +3518,8 @@ void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 	else if (IsGlobalScope ())
 	{
 		assert (!IsPhase2 ());
-		m_anGlobalVars .Add (nSymbol);
-		m_anGlobalDefs .Add (nSymbol);
+		m_anGlobalVars .push_back (nSymbol);
+		m_anGlobalDefs .push_back (nSymbol);
 		pSymbol ->ulFlags |= NscSymFlag_Global;
 
 		MarkGlobalIdentifierSymbol (pSymbol);
@@ -3647,7 +3648,7 @@ NscSymbol *CNscContext::AddPrototype (const char *pszIdentifier,
 
 	if ((ulFlags & NscSymFlag_EngineFunc) != 0)
 	{
-		m_pCompiler ->NscGetCompilerState () ->m_anNscActions .Add (nSymbol);
+		m_pCompiler ->NscGetCompilerState () ->m_anNscActions .push_back (nSymbol);
 		sExtra .nAction = m_pCompiler ->NscGetCompilerState () ->m_nNscActionCount++;
 	}
 
@@ -3783,7 +3784,7 @@ void CNscContext::AddStructure (const char *pszIdentifier,
 	//
 
 	m_anStructSymbol [m_nStructs++] = nSymbol;
-	m_anGlobalDefs .Add (nSymbol);
+	m_anGlobalDefs .push_back (nSymbol);
 	MarkGlobalIdentifierSymbol (pSymbol);
 }
 
