@@ -113,7 +113,7 @@ intptr_t _findfirst(const char* filespec, struct _finddata_t* fileinfo) {
          * forward slash.
          */
         size_t pathlen = strlen(filespec) +1;
-        char* dirpath = new char(pathlen);
+        char* dirpath = new char[pathlen];
         memcpy(dirpath, filespec, pathlen);
         dirpath[rmslash - filespec] = '\0';
         return findfirst_in_directory(dirpath, spec, fileinfo);
