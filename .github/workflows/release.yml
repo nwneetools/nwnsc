@@ -35,6 +35,8 @@ jobs:
         run: choco install winflexbison
 
       - name: Build nwnsc
+        env:
+          CFLAGS/CXXFLAGS: -g -O2 -fvisibility=hidden
         shell: bash
         run: |
           cmake .
