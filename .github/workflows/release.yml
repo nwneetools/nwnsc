@@ -1,0 +1,67 @@
+name: Release Nwnsc Binaries
+
+on:
+  pull_request:
+  push:
+  release:
+    types: published
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            zip_name: nwnsc-linux
+          - os: macos-latest
+            zip_name: nwnsc-mac
+          - os: windows-latest
+            zip_name: nwnsc-win
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Install OS specific dependencies
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install bison
+      - name: Install macos dependencies
+        if: matrix.os == 'macos-latest'
+        run: brew bison cmake
+      - name: Install Windows dependencies
+        if: matrix.os == 'windows-latest'
+        run: choco install winflexbison
+
+      - name: Build nwnsc
+        shell: bash
+        run: |
+          cmake .
+          make all
+
+      - name: Create nwnsc archive
+        shell: bash
+        env:
+          ZIP_NAME: ${{ matrix.zip_name }}
+        run: |
+          mkdir artifact
+          7z a artifact/${ZIP_NAME}.zip $(find ./build -name nwnsc -or -name nwnsc.exe)
+
+      # Upload nwnsc binary archive as an artifact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: nwnsc-binary-archives
+          path: artifact
+
+      - name: Upload release asset
+        if: github.event.action == 'published'
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifact/${{ matrix.zip_name }}.zip
+          asset_name: ${{ matrix.zip_name }}.zip
+          asset_content_type: application/zip
