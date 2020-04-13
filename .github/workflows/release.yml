@@ -48,7 +48,7 @@ jobs:
           ZIP_NAME: ${{ matrix.zip_name }}
         run: |
           mkdir artifact
-          7z a artifact/${ZIP_NAME}.zip $(find ./build -name nwnsc -or -name nwnsc.exe)
+          7z a artifact/${ZIP_NAME}.zip $(find ./nwnsc -name nwnsc -or -name nwnsc.exe)
 
       # Upload nwnsc binary archive as an artifact
       - name: Upload artifact
