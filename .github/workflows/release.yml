@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: git fetch --prune --unshallow --tags
+      - run: git fetch --prune --unshallow --tags -f
 
       # Install OS specific dependencies
       - name: Install Linux dependencies
@@ -48,8 +48,9 @@ jobs:
         env:
           ZIP_NAME: ${{ matrix.zip_name }}
         run: |
+          NWNSC_VERSION=`git describe --tags --dirty=-dirty`
           mkdir artifact
-          7z a artifact/${ZIP_NAME}-${GITHUB_SHA:0:7}.zip $(find ./nwnsc -name nwnsc -type f -or -name nwnsc.exe -type f)
+          7z a artifact/${ZIP_NAME}-${NWNSC_VERSION}.zip $(find ./nwnsc -name nwnsc -type f -or -name nwnsc.exe -type f)
 
       # Upload nwnsc binary archive as an artifact
       - name: Upload artifact
