@@ -107,7 +107,7 @@ typedef union _LARGE_INTEGER {
 #define bswap_32(x) _byteswap_ulong(x)
 #define bswap_64(x) _byteswap_uint64(x)
 #define access _access
-#define vsmin min
+#define vsmin std::min
 
 #elif defined(__APPLE__)
 
