@@ -22,7 +22,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: git fetch --prune --unshallow --tags -f
+      - name: Set up repository and variables
+        run: |
+          git fetch --prune --unshallow --tags -f
+          echo "::set-env name=NWNSC_VERSION::`git describe --tags --dirty=-dirty --always`"
+        shell: bash
 
       # Install OS specific dependencies
       - name: Install Linux dependencies
@@ -48,7 +52,6 @@ jobs:
         env:
           ZIP_NAME: ${{ matrix.zip_name }}
         run: |
-          NWNSC_VERSION=`git describe --tags --dirty=-dirty`
           mkdir artifact
           7z a artifact/${ZIP_NAME}-${NWNSC_VERSION}.zip $(find ./nwnsc -name nwnsc -type f -or -name nwnsc.exe -type f)
 
@@ -66,6 +69,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./artifact/${{ matrix.zip_name }}.zip
-          asset_name: ${{ matrix.zip_name }}.zip
+          asset_path: ./artifact/${{ matrix.zip_name }}-${{ env.NWNSC_VERSION }}.zip
+          asset_name: ${{ matrix.zip_name }}-${{ env.NWNSC_VERSION }}.zip
           asset_content_type: application/zip
