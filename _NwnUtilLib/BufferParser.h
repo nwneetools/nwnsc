@@ -105,7 +105,7 @@ namespace swutil
 		bool
 		GetFieldBits(
 			 size_t NumBits,
-			 unsigned long &FieldBits
+			 uint32_t &FieldBits
 			)
 		{
 			uint64_t Bits;
@@ -116,7 +116,7 @@ namespace swutil
 			if (!GetFieldBits( NumBits, Bits ))
 				return false;
 
-			FieldBits = static_cast< unsigned long >( Bits );
+			FieldBits = static_cast< uint32_t >( Bits );
 
 			return true;
 		}
@@ -284,7 +284,7 @@ namespace swutil
 		bool
 		GetFieldBits(
 			 size_t NumBits,
-			 unsigned long &FieldBits
+			 uint32_t &FieldBits
 			)
 		{
 			uint64_t Bits;
@@ -295,7 +295,7 @@ namespace swutil
 			if (!GetFieldBits( NumBits, Bits ))
 				return false;
 
-			FieldBits = static_cast< unsigned long >( Bits );
+			FieldBits = static_cast< uint32_t >( Bits );
 
 			return true;
 		}
