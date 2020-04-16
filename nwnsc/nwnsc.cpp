@@ -335,7 +335,7 @@ Environment:
 #elif defined(__linux__)
                 SteamRootDir = GetHomeDirectory() + "/.local/share/Steam/steamapps/common/Neverwinter Nights/";
 #elif defined(_WINDOWS)
-                SteamRootDir = GetHomeDirectory() + "/Library/Application Support/Steam/steamapps/common/Neverwinter Nights/";
+                SteamRootDir = GetHomeDirectory() + "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Neverwinter Nights\\";
 #endif
                 if (FileExists(SteamRootDir + KeyFile))
                     RootDir = SteamRootDir;
@@ -736,7 +736,7 @@ Environment:
         SrcFile = nullptr;
         return false;
     }
-    
+
     fclose(SrcFile);
     return true;
 
@@ -1943,7 +1943,7 @@ Environment:
                             CompilerFlags |= NscCompilerFlag_ShowPreprocessed;
                             break;
 
-                        case 'l': 
+                        case 'l':
                             LoadResources = true;
                             break;
 
