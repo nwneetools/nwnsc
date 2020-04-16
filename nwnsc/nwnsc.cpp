@@ -335,7 +335,7 @@ Environment:
 #elif defined(__linux__)
                 SteamRootDir = GetHomeDirectory() + "/.local/share/Steam/steamapps/common/Neverwinter Nights/";
 #elif defined(_WINDOWS)
-                SteamRootDir = GetHomeDirectory() + "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Neverwinter Nights\\";
+                SteamRootDir = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Neverwinter Nights\\";
 #endif
                 if (FileExists(SteamRootDir + KeyFile))
                     RootDir = SteamRootDir;
