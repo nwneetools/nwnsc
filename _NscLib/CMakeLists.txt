@@ -12,7 +12,6 @@ add_library(nsclib
         NscPStackEntry
         NscPStackEntry
         NscSymbolTable
-        NwnArray
         NwnDefines
         NwnDoubleLinkList
         NwnLoader
