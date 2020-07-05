@@ -1,21 +1,30 @@
 ![C/C++ CI](https://github.com/nwneetools/nwnsc/workflows/C/C++%20CI/badge.svg)
 
-# Readme contains outdated information. Update in progress.
+# NWScript Compiler
 
-nwnsc script compiler
+The open source compiler implementation for nwscript, the scripting language used by the game Neverwinter Nights.
 
-Binaries Avaialble - https://neverwintervault.org/project/nwn1/other/tool/nwnsc-nwn-enhanced-edition-script-compiler
+## Binaries
 
-Docker image: glorwinger/nwnsc
+Available under [Releases](https://github.com/nwneetools/nwnsc/releases).
+
+## Usage
+
+Run `nwnsc -h` from the command line to print the help message.
+
+## Docker
+
+The image `nwneetools/nwnsc` exists to supplement container based workflows.
+
 To compile all nss in current directory with a container, run
 
 ```
-docker run --rm -it -v "$(pwd):/tmp" jakkn/nwnsc
+docker run --rm -it -v "$(pwd):/tmp" nwneetools/nwnsc
 ```
 
 Further runtime arguments to nwnsc can be given at the end, including targets.
 
----
+## Technical info
 
 This source release includes libraries to read and manipulate various
 NWN-related data formats.
