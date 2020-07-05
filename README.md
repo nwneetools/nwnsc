@@ -1,3 +1,5 @@
+![C/C++ CI](https://github.com/nwneetools/nwnsc/workflows/C/C++%20CI/badge.svg)
+
 # Readme contains outdated information. Update in progress.
 
 nwnsc script compiler
