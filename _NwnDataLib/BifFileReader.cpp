@@ -610,6 +610,12 @@ Environment:
 	if (memcmp( &Header.Version, "V1  ", 4 ))
 		throw std::runtime_error( "Header.Version is not V1 (illegal BIF file)" );
 
+	if (Header.VariableTableOffset == m_FileWrapper.GetFileSize())
+	{
+		//Empty BIF file, skip
+		return;
+	}
+
 	m_FileWrapper.SeekOffset( Header.VariableTableOffset, "VariableTableOffset" );
 
 	for (unsigned long i = 0; i < Header.VariableResourceCount; i += 1)
