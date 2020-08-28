@@ -24,6 +24,19 @@ docker run --rm -it -v "$(pwd):/tmp" nwneetools/nwnsc
 
 Further runtime arguments to nwnsc can be given at the end, including targets.
 
+## Building from Scratch
+
+### Ubuntu 20.04
+
+Compile with cmake.
+
+```
+$ cmake .
+$ make
+```
+
+`nwnsc` binary will be in the `./nwnsc` directory.
+
 ## Technical info
 
 This source release includes libraries to read and manipulate various
