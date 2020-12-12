@@ -868,8 +868,8 @@ void CNscContext::GenerateMessage (NscMessage nMessage, ...)
 				const char *pszFunction = va_arg (marker, const char *);
 				const char *pszArgument = va_arg (marker, const char *);
 				int nArgNumber = va_arg (marker, int);
-				NscType nTypeExpected = va_arg (marker, NscType);
-				NscType nTypeActual = va_arg (marker, NscType);
+				NscType nTypeExpected = static_cast<NscType>(va_arg (marker, int));
+				NscType nTypeActual = static_cast<NscType>(va_arg (marker, int));
 
 				GenerateError ("%sType mismatch in parameter %d "
 					"(\"%s\") in call to \"%s\": Expected type \"%s\", but "
@@ -1057,7 +1057,7 @@ void CNscContext::GenerateMessage (NscMessage nMessage, ...)
 		case NscMessage_ErrorEntrySymbolMustReturnType:
 			{
 				const char *pszSymbol = va_arg (marker, const char *);
-				NscType nType = va_arg (marker, NscType);
+				NscType nType = static_cast<NscType>(va_arg (marker, int));
 
 				GenerateError ("%sEntry point symbol \"%s\" must return type \"%s\"",
 					szPrefix, pszSymbol, GetTypeName (nType));
@@ -1148,7 +1148,7 @@ void CNscContext::GenerateMessage (NscMessage nMessage, ...)
 
 		case NscMessage_ErrorDefaultInitNotPermitted:
 			{
-				NscType nType = va_arg (marker, NscType);
+				NscType nType = static_cast<NscType>(va_arg (marker, int));
 				const char *pszId = va_arg (marker, const char *);
 
 				GenerateError ("%sDefault initializer not permitted for type \"%s\" "
