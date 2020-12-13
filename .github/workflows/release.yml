@@ -25,7 +25,7 @@ jobs:
       - name: Set up repository and variables
         run: |
           git fetch --prune --unshallow --tags -f
-          echo "::set-env name=NWNSC_VERSION::`git describe --tags --dirty=-dirty --always`"
+          echo "NWNSC_VERSION=`git describe --tags --dirty=-dirty --always`" >> $GITHUB_ENV
         shell: bash
 
       # Install OS specific dependencies
