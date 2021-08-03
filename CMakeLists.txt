@@ -30,6 +30,7 @@ set(version_file "${CMAKE_CURRENT_SOURCE_DIR}/_NwnUtilLib/version.cpp")
 
 if (APPLE)
     set(CMAKE_MACOSX_RPATH 1)
+    set(CMAKE_OSX_ARCHITECTURES arm64;x86_64)
 endif()
 
 find_package(BISON)
