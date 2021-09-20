@@ -302,11 +302,15 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 	if (nVersion < 174) {
 		sCtx.SetDisableNwnEeEscape(true);
 	}
-    if ((ulCompilerFlags & NscCompilerFlag_DisableDoubleQuote) != 0) {
-        sCtx.SetDisableNwnEeEscape(true);
+	if ((ulCompilerFlags & NscCompilerFlag_DisableDoubleQuote) != 0) {
+		sCtx.SetDisableNwnEeEscape(true);
 	}
 
-    if (pErrorOutput)
+	if ((ulCompilerFlags & NscCompilerFlag_DisableHexByte) != 0) {
+		sCtx.SetDisableHexByte(true);
+	}
+
+	if (pErrorOutput)
 	{
 		sCtx. SetErrorOutputStream(pErrorOutput);
 	}
@@ -1789,6 +1793,3 @@ NscCompiler::NscFlushResourceCache (
 			free (it ->second .Contents);
 	}
 }
-
-
-

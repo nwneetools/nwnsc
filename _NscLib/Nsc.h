@@ -140,13 +140,14 @@ enum NscFuncFlags
 
 enum NscCompilerFlags
 {
-	NscCompilerFlag_DumpPCode 			= 0x00000001,
-	NscCompilerFlag_ShowIncludes		= 0x00000002,
-	NscCompilerFlag_ShowPreprocessed	= 0x00000004,
-	NscCompilerFlag_StrictModeEnabled	= 0x00000008,
-	NscCompilerFlag_GenerateMakeDeps	= 0x00000010,
-    NscCompilerFlag_SuppressWarnings   	= 0x00000020,
-    NscCompilerFlag_DisableDoubleQuote  = 0x00000040,
+	NscCompilerFlag_DumpPCode 					= 0x00000001,
+	NscCompilerFlag_ShowIncludes				= 0x00000002,
+	NscCompilerFlag_ShowPreprocessed		= 0x00000004,
+	NscCompilerFlag_StrictModeEnabled		= 0x00000008,
+	NscCompilerFlag_GenerateMakeDeps		= 0x00000010,
+	NscCompilerFlag_SuppressWarnings		= 0x00000020,
+	NscCompilerFlag_DisableDoubleQuote	= 0x00000040,
+	NscCompilerFlag_DisableHexByte			= 0x00000080,
 };
 
 //-----------------------------------------------------------------------------

@@ -2056,6 +2056,10 @@ Environment:
                             CompilerFlags |= NscCompilerFlag_DisableDoubleQuote;
                             break;
 
+                        case 'H':
+                            CompilerFlags |= NscCompilerFlag_DisableHexByte;
+                            break;
+
                         default: {
                             g_TextOut.WriteText("Error: Unrecognized option \"%c\".\n", Switch);
                             Error = true;
@@ -2124,7 +2128,7 @@ Environment:
     if ((Usage) || (Error) || (InFiles.empty())) {
         g_TextOut.WriteText(
                 "\nUsage: version %s - built %s %s\n\n"
-                        "nwnsc [-degjklorsqvwyMQ] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
+                        "nwnsc [-degjklorsqvwyMQH] [-b batchoutdir] [-h homedir] [-i pathspec] [-n installdir]\n"
                         "      [-m mode] [-x errprefix] [-r outfile] infile [infile...]\n\n"
                         "  -b batchoutdir - Supplies the location where batch mode places output files\n"
                         "  -h homedir     - Per-user NWN home directory (i.e. Documents\\Neverwinter Nights)\n"
@@ -2148,7 +2152,8 @@ Environment:
                         "  -w - Suppress compile warnings (default: false)\n"
                         "  -y - Continue processing input files even on error\n"
                         "  -M - Create makefile dependency (.d) files\n"
-                        "  -Q - Disable the parsing of \\\" and \\\\ (added in NWN EE) \n\n"
+                        "  -Q - Disable the parsing of \\\" and \\\\ (added in NWN EE)\n"
+                        "  -H - Disable the parsing of \\xFF escape sequences to put bytes in strings (added in NWN EE)\n\n"
                         "  The Compiler requires the nwscript.nss from the game resources. The following order\n"
                         "      will be followed to find the file. The search stops on the first match.\n"
                         "    1. -i pathspec  The pathspec will be searched as the game scipts may\n"
@@ -2407,7 +2412,3 @@ Environment:
 
     return ReturnCode;
 }
-
-
-
-

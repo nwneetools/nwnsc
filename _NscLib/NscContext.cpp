@@ -132,6 +132,7 @@ CNscContext::CNscContext (NscCompiler *pCompiler)
 	m_nMaxFunctionParameterCount = INT_MAX;
 	m_nMaxIdentifierCount = INT_MAX;
 	m_DisableNwnEeEscape = false;
+	m_DisableHexByte = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -799,7 +800,7 @@ get_next_token:;
 								*pszOut++ = '\\';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
-							else if (c == 'x' && strlen(m_pStreamTop ->pszNextTokenPos) >= 3) // hex value has to have length of 2
+							else if (c == 'x' && !m_DisableHexByte && strlen(m_pStreamTop ->pszNextTokenPos) >= 3) // hex value has to have length of 2
 							{
 								bool isHex = true;
 								int nValue = 0;

@@ -1083,6 +1083,14 @@ public:
 		return m_DisableNwnEeEscape;
 	}
 
+	void SetDisableHexByte (bool DisableHexByte) {
+		m_DisableHexByte = DisableHexByte;
+	}
+
+	bool GetDisableHexByte () {
+		return m_DisableHexByte;
+	}
+
 	void SetSuppressWarnings (bool mSuppressWarnings) {
 		m_SuppressWarnings = mSuppressWarnings;
 	}
@@ -1910,6 +1918,10 @@ protected:
 	// @cmember disable String escapes added in NWN EE.
 
 	int						m_DisableNwnEeEscape;
+
+	// @cmember disable xFF escape sequences to put bytes in strings.
+
+	int						m_DisableHexByte;
 };
 
 #endif // ETS_NSCCONTEXT_H
