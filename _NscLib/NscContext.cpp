@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// 
+//
 // @doc
 //
 // @module	NscContext.cpp - Compiler context support |
@@ -10,32 +10,32 @@
 //
 // All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without 
-// modification, are permitted provided that the following conditions are 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are
 // met:
-// 
-// 1. Redistributions of source code must retain the above copyright notice, 
-//    this list of conditions and the following disclaimer. 
-// 2. Neither the name of Edward T. Smith nor the names of its contributors 
-//    may be used to endorse or promote products derived from this software 
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// 2. Neither the name of Edward T. Smith nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
 //
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED 
-// TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+// TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // @end
 //
 // $History: Cnf.cpp $
-//      
+//
 //-----------------------------------------------------------------------------
 
 #include <vector>
@@ -153,7 +153,7 @@ CNscContext::~CNscContext ()
 		CNwnDoubleLinkList *pNext = m_listEntryAllocated .GetNext ();
 		CNscPStackEntry *pEntry = (CNscPStackEntry *) pNext;
 #ifdef _DEBUG
-		printf ("Leaked PStackEntry (%s,%d)\n", 
+		printf ("Leaked PStackEntry (%s,%d)\n",
 			pEntry ->m_pszFile, pEntry ->m_nLine);
 #endif
 		pEntry ->Free ();
@@ -193,8 +193,8 @@ CNscContext::~CNscContext ()
 
 int CNscContext::parse ()
 {
-    yy::parser parser(*this);
-    return parser.parse();
+	yy::parser parser(*this);
+	return parser.parse();
 }
 
 //-----------------------------------------------------------------------------
@@ -226,7 +226,7 @@ int CNscContext::yylex (YYSTYPE* yylval)
 	//
 
 try_again:;
-	if (m_pStreamTop ->pszNextTokenPos == NULL || 
+	if (m_pStreamTop ->pszNextTokenPos == NULL ||
 		*m_pStreamTop ->pszNextTokenPos == 0)
 	{
 read_another_line:;
@@ -378,9 +378,9 @@ get_next_token:;
 				return pSymbol ->nToken;
 			}
 			else
-                return pSymbol ->nToken;
+				return pSymbol ->nToken;
 		}
-		else 
+		else
 		{
 			CNscPStackEntry *pEntry = GetPStackEntry (__FILE__, __LINE__);
 			pEntry ->SetIdentifier (pszStart, nCount);
@@ -399,11 +399,11 @@ get_next_token:;
 	else if (isdigit (c))
 	{
 
-		// 
+		//
 		// If this is a hex value
 		//
 
-		if (c == '0' && 
+		if (c == '0' &&
 			(m_pStreamTop ->pszNextTokenPos [1] == 'x' ||
 			m_pStreamTop ->pszNextTokenPos [1] == 'X'))
 		{
@@ -444,7 +444,7 @@ get_next_token:;
 			pEntry ->SetType (NscType_Integer);
 			pEntry ->PushConstantInteger (nValue);
 			*yylval = pEntry;
-			return INTEGER_CONST; 
+			return INTEGER_CONST;
 		}
 
 		//
@@ -560,7 +560,7 @@ get_next_token:;
 					m_pStreamTop ->pszNextTokenPos++;
 					return DIVEQ;
 				}
-				else 
+				else
 				{
 					return '/';
 				}
@@ -790,10 +790,10 @@ get_next_token:;
 								m_pStreamTop ->pszNextTokenPos++;
 							}
 							else if (c == '"' && !m_DisableNwnEeEscape)
-                            {
-                                *pszOut++ = '"';
-                                m_pStreamTop ->pszNextTokenPos++;
-                            }
+							{
+								*pszOut++ = '"';
+								m_pStreamTop ->pszNextTokenPos++;
+							}
 							else if (c == '\\' && !m_DisableNwnEeEscape)
 							{
 								*pszOut++ = '\\';
@@ -809,7 +809,7 @@ get_next_token:;
 							pEntry ->PushConstantString (pszStart, (int) (pszOut - pszStart));
 							*yylval = pEntry;
 							GenerateMessage (NscMessage_ErrorUnterminatedString);
-                            return STRING_CONST;
+							return STRING_CONST;
 						}
 						else
 							*pszOut++ = c;
@@ -1494,7 +1494,7 @@ void CNscContext::GenerateMessage (NscMessage nMessage, ...)
 
 		case NscMessage_WarningInvalidCharacter:
 			{
-			    char c = (char)va_arg(marker, int);
+				char c = (char)va_arg(marker, int);
 				GenerateWarning ("%sInvalid character '%c' (0x%02X) "
 					"found in source, ignored", szPrefix, c, c);
 			}
@@ -1729,8 +1729,8 @@ try_again:;
 				//
 
 				if (m_pStreamTop ->pNext != NULL &&
-				    pfForceTerminateComment != NULL &&
-				    GetIncludeTerminatesComment () == true)
+					pfForceTerminateComment != NULL &&
+					GetIncludeTerminatesComment () == true)
 				{
 					if (!IsPhase2 ())
 						GenerateMessage (NscMessage_WarningEOFReachedInComment);
@@ -1826,7 +1826,7 @@ try_again:;
 				//
 				// Remove any extension
 				//
-                                
+
 				p = strchr (pszTemp, '.');
 				if (p)
 					*p = 0;
@@ -1861,7 +1861,7 @@ try_again:;
 					if (m_pLoader)
 					{
 						pauchData = m_pLoader ->LoadResource (
-							pszTemp, NwnResType_NSS, &ulSize, 
+							pszTemp, NwnResType_NSS, &ulSize,
 							&fAllocated);
 					}
 					if (pauchData == NULL)
@@ -2070,7 +2070,7 @@ try_again:;
 				// Otherwise, unknown
 				//
 
-				else 
+				else
 				{
 					GenerateMessage (NscMessage_ErrorDefineUnknownOrInvalid);
 				}
@@ -3392,7 +3392,7 @@ CNscPStackEntry *CNscContext::GetPStackEntryInt ()
 {
 
 	//
-	// If we can get off the free stack, then do so.  Otherwise, 
+	// If we can get off the free stack, then do so.  Otherwise,
 	// create a new one
 	//
 
@@ -3432,7 +3432,7 @@ CNscPStackEntry *CNscContext::GetPStackEntryInt ()
 //
 //-----------------------------------------------------------------------------
 
-void CNscContext::AddVariableInit (NscSymbol *pSymbol, 
+void CNscContext::AddVariableInit (NscSymbol *pSymbol,
 	unsigned char *pauchInit, size_t nInitSize)
 {
 
@@ -3479,7 +3479,7 @@ void CNscContext::AddVariableInit (NscSymbol *pSymbol,
 //
 //-----------------------------------------------------------------------------
 
-void CNscContext::AddVariable (const char *pszIdentifier, NscType nType, 
+void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 	UINT32 ulFlags)
 {
 
@@ -3540,7 +3540,7 @@ void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 				Max_Compat_Named_Vars_Visible);
 		}
 	}
-	else 
+	else
 	{
 		assert (IsPhase2 ());
 		assert (m_pCurrentFence);
@@ -3560,7 +3560,7 @@ void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 		//
 
 		size_t nVarsVisible;
-		nVarsVisible = (size_t) pFunctionFence ->nFunctionLocals + 
+		nVarsVisible = (size_t) pFunctionFence ->nFunctionLocals +
 			GetGlobalVariableCount ();
 		if (nVarsVisible > Max_Compat_Named_Vars_Visible &&
 			pFunctionFence ->fWarnedLocalOverflow == false &&
@@ -3585,7 +3585,7 @@ void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 //
 // @parm UINT32 | ulFlags | Flags
 //
-// @parm unsigned char * | pauchArgData | Argument data 
+// @parm unsigned char * | pauchArgData | Argument data
 //
 // @parm size_t | nArgDataSize | Size of the data
 //
@@ -3593,8 +3593,8 @@ void CNscContext::AddVariable (const char *pszIdentifier, NscType nType,
 //
 //-----------------------------------------------------------------------------
 
-NscSymbol *CNscContext::AddPrototype (const char *pszIdentifier, 
-	NscType nType, UINT32 ulFlags, unsigned char *pauchArgData, 
+NscSymbol *CNscContext::AddPrototype (const char *pszIdentifier,
+	NscType nType, UINT32 ulFlags, unsigned char *pauchArgData,
 	size_t nArgDataSize)
 {
 
@@ -3712,7 +3712,7 @@ NscSymbol *CNscContext::AddPrototype (const char *pszIdentifier,
 //
 // @parm const char * | pszIdentifier | New identifier
 //
-// @parm unsigned char * | pauchStructData | Data 
+// @parm unsigned char * | pauchStructData | Data
 //
 // @parm size_t | nStructDataSize | Size of the data
 //
@@ -3720,7 +3720,7 @@ NscSymbol *CNscContext::AddPrototype (const char *pszIdentifier,
 //
 //-----------------------------------------------------------------------------
 
-void CNscContext::AddStructure (const char *pszIdentifier, 
+void CNscContext::AddStructure (const char *pszIdentifier,
 	unsigned char *pauchStructData, size_t nStructDataSize)
 {
 
@@ -3963,4 +3963,3 @@ NscCompilerState *CNscContext::GetCompilerState ()
 {
 	return GetCompiler () ->NscGetCompilerState ();
 }
-
