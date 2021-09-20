@@ -799,6 +799,28 @@ get_next_token:;
 								*pszOut++ = '\\';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
+							else if (c == 'x' && strlen(m_pStreamTop ->pszNextTokenPos) >= 3) // hex value has to have length of 2
+							{
+								bool isHex = true;
+								int nValue = 0;
+								for (int pos = 1; pos <= 2; pos++)
+								{
+									char hex = m_pStreamTop ->pszNextTokenPos [pos];
+									if (isdigit(hex)) nValue = nValue * 16 + (hex - '0');
+									else if (hex >= 'A' && hex <= 'F') nValue = nValue * 16 + (hex - 'A' + 10);
+									else if (hex >= 'a' && hex <= 'f') nValue = nValue * 16 + (hex - 'a' + 10);
+									else
+									{
+										isHex = false;
+										break;
+									}
+								}
+								if (isHex && nValue > 0)
+								{
+									*pszOut++ = char(nValue);
+									m_pStreamTop ->pszNextTokenPos += 3;
+								}
+							}
 							else
 								;
 						}
