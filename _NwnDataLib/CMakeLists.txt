@@ -1,11 +1,15 @@
 add_library(nwndatalib
-        BifFileReader
-        FileWrapper
-        KeyFileReader
-        NWNDataLib
-        NWScriptReader
-        Precomp
-        ResourceAccessor
-        ResourceManager
-        TextOut
+        BifFileReader.cpp
+        BifFileReader.h
+        FileWrapper.h
+        KeyFileReader.cpp
+        KeyFileReader.h
+        NWNDataLib.h
+        NWScriptReader.cpp
+        NWScriptReader.h
+        Precomp.h
+        ResourceAccessor.h
+        ResourceManager.cpp
+        ResourceManager.h
+        TextOut.h
 )
