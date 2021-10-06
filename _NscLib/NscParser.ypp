@@ -665,11 +665,11 @@ expression_statement:
 			{
 				if (YYLVAL != NULL)
 					YYLVAL;
-				YYCHAR_NAME = YYEMPTY;
-				YYCHAR_NAME = yylex (&YYLVAL, context);
+				YYLA_EMPTY;
+				YYLA_CHARNAME_LEX;
 			}
 			if (YYCHAR_NAME == ';')
-				YYCHAR_NAME = YYEMPTY;
+				YYLA_EMPTY;
 		}
 	;
 
@@ -992,10 +992,10 @@ translation_unit:
 			{
 				if (YYLVAL != NULL)
 					YYLVAL;
-				YYCHAR_NAME = YYEMPTY;
-				YYCHAR_NAME = yylex (&YYLVAL, context);
+				YYLA_EMPTY;
+				YYLA_CHARNAME_LEX;
 			}
-			YYCHAR_NAME = YYEMPTY;
+			YYLA_EMPTY;
 		} 	
 	;
 
