@@ -38,6 +38,7 @@
 //      
 //-----------------------------------------------------------------------------
 
+#include <ctype.h>
 #include <vector>
 #include "Precomp.h"
 #include "Nsc.h"
@@ -781,7 +782,7 @@ get_next_token:;
 
 							return STRING_CONST;
 						}
-						else if (c == '\\')
+						else if (c == '\\') // String Escapes
 						{
 							c = *m_pStreamTop ->pszNextTokenPos;
 							if (c == 'n')
@@ -790,17 +791,45 @@ get_next_token:;
 								m_pStreamTop ->pszNextTokenPos++;
 							}
 							else if (c == '"' && !m_DisableNwnEeEscape)
-                            {
-                                *pszOut++ = '"';
-                                m_pStreamTop ->pszNextTokenPos++;
-                            }
+							{
+								*pszOut++ = '"';
+								m_pStreamTop ->pszNextTokenPos++;
+							}
 							else if (c == '\\' && !m_DisableNwnEeEscape)
 							{
 								*pszOut++ = '\\';
 								m_pStreamTop ->pszNextTokenPos++;
 							}
-							else
-								;
+							else if (c == 'x' && !m_DisableNwnEeEscape) {
+								char vals[3];
+								int val;
+								// move past the 'x'
+                                                                m_pStreamTop ->pszNextTokenPos++;
+								c = *m_pStreamTop ->pszNextTokenPos;
+								if (isxdigit(c)) {
+									vals[0] = c;
+									m_pStreamTop ->pszNextTokenPos++;
+									// Check for a second digit only
+									c = *m_pStreamTop ->pszNextTokenPos;
+									if (isxdigit(c)) {
+										vals[1] = c;
+										vals[2] = 0;
+										m_pStreamTop ->pszNextTokenPos++;
+									} else {
+										vals[1] = 0;
+									}
+									val = strtol(vals, NULL, 16);
+									*pszOut++ = val;
+								} else {
+									//error: \x used with no following hex digits
+									//undo - we've moved passed the x so write it
+									// inbox compile consumes it.  But it also blindly
+									// consumes following 2 chars even if not hex digits.
+									*pszOut++ = 'x';
+								}
+							}
+						        else
+								; //warning: unknown escape sequence: '\z'
 						}
 						else if (c == 0)
 						{
