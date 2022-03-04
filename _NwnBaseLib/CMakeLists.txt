@@ -1,6 +1,7 @@
 add_library(nwnbaselib
-        BaseConstants
-        BaseTypes
-        ModelSystem
-        NWNBaseLib
+        BaseConstants.h
+        BaseTypes.cpp
+        BaseTypes.h
+        ModelSystem.h
+        NWNBaseLib.h
 )
