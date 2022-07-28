@@ -134,12 +134,14 @@ CNscCodeGenerator::~CNscCodeGenerator ()
 // @parm CNwnStream * | pDebugOutput | Destination stream for NDB file. 
 //		(Can be NULL)
 //
+// @parm bool | IgnoreIncludes | Either or not we compile includes. 
+//
 // @rdesc TRUE if output was generated.
 //
 //-----------------------------------------------------------------------------
 
 bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput, 
-	CNwnStream *pDebugOutput)
+	CNwnStream *pDebugOutput, bool IgnoreIncludes)
 {
 
 	//
@@ -192,11 +194,15 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 				return false;
 			}
 		}
-		else
-		{
-			m_pCtx ->GenerateMessage (NscMessage_ErrorEntrySymbolNotFound);
-			return false;
-		}
+	}
+
+	if (IgnoreIncludes && pSymbol == NULL)	{
+		m_pCtx ->GenerateMessage (NscMessage_ErrorEntrySymbolNotFound);
+		return false;
+	// If we want to compile an include, treat it like a StartingConditional
+	} else if (!IgnoreIncludes && pSymbol == NULL) {
+		pszRoutine = "StartingConditional";
+		fIsMain = false;
 	}
 
 	//
