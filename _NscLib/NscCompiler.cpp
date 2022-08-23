@@ -410,7 +410,7 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 
 	try
 	{
-		if (!sGen .GenerateOutput (pCodeOutput, pDebugOutput))
+		if (!sGen .GenerateOutput (pCodeOutput, pDebugOutput, fIgnoreIncludes))
 			return NscResult_Failure;
 	}
 	catch (std::exception)

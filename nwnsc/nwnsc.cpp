@@ -966,7 +966,7 @@ Environment:
             return false;
 
         case NscResult_Include:
-            if (!Quiet) {
+            if (!Quiet && IgnoreIncludes) {
                 TextOut->WriteText(
                         "%s.nss is an include file, ignored.",
                         InFile.RefStr);
@@ -990,8 +990,14 @@ Environment:
     //
 
     FileName = OutBaseFile;
-    FileName += ".ncs";
 
+    if (FileName == "SKIP_OUTPUT") {
+        TextOut->WriteText(
+                "Skipped compiled file generation.\n");
+        return true;
+    }
+
+    FileName += ".ncs";
     f = fopen(FileName.c_str(), "wb");
 
     if (f == nullptr) {
@@ -1768,6 +1774,7 @@ Environment:
     StringVec ResponseFileText;
     StringArgVec ResponseFileArgs;
     bool Compile = true;
+    bool IgnoreIncludes = true;
     bool Optimize = false;
     bool EnableExtensions = false;
     bool NoDebug = true;
@@ -1998,6 +2005,10 @@ Environment:
                             Optimize = true;
                             break;
 
+                        case 'c':
+                            IgnoreIncludes = false;
+                            break;
+
                         case 'p':
                             CompilerFlags |= NscCompilerFlag_DumpPCode;
                             break;
@@ -2133,6 +2144,7 @@ Environment:
                         "  -m mode        - Compiler mode 1.69 or 1.74 - (default 1.74) \n"
                         "  -x errprefix   - Prefix string to prepend to compiler errors (default \"Error\")\n\n"
                         "  -d - Disassemble the script (overrides default compile\n"
+                        "  -c - Compile includes\n"
                         "  -e - Enable non-BioWare extensions\n"
                         "  -g - Enable generation of .ndb debug symbols file\n"
                         "  -j - Show where include file are being sourced from\n"
@@ -2287,7 +2299,7 @@ Environment:
                     Compile,
                     CompilerVersion,
                     Optimize,
-                    true,
+                    IgnoreIncludes,
                     NoDebug,
                     Quiet,
                     VerifyCode,
@@ -2350,7 +2362,7 @@ Environment:
                     Compile,
                     CompilerVersion,
                     Optimize,
-                    true,
+                    IgnoreIncludes,
                     NoDebug,
                     Quiet,
                     VerifyCode,

@@ -98,7 +98,7 @@ public:
 
 	// @cmember Generate the output
 
-	bool GenerateOutput (CNwnStream *pCodeOutput, CNwnStream *pDebugOutput);
+	bool GenerateOutput (CNwnStream *pCodeOutput, CNwnStream *pDebugOutpu, bool IgnoreIncludes);
 
 // @access Public inline methods
 public:
