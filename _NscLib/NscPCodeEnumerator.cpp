@@ -600,6 +600,21 @@ bool CNscPCodePrinter::OnPCodeEntry (PCodeEntryParameters *pEntry)
 				break;
 
 			//
+			// location is same as int, just different auxtype
+			//
+
+			case NscType_Engine_2:
+				{
+
+					const NscPCodeConstantLocation *p;
+					p = (NscPCodeConstantLocation *) pEntry ->pHeader;
+
+					snprintf (szParam, sizeof (szParam), "((location) %d)",
+						p ->lValue);
+				}
+				break;
+
+			//
 			// If this is a float
 			//
 
@@ -640,6 +655,21 @@ bool CNscPCodePrinter::OnPCodeEntry (PCodeEntryParameters *pEntry)
 					p = (NscPCodeConstantString *) pEntry ->pHeader;
 
 					snprintf (szParam, sizeof (szParam), "((string) \"%.*s\")",
+						(unsigned long) p -> nLength, p ->szString);
+				}
+				break;
+
+			//
+			// json is same as string, just different auxtype
+			//
+
+			case NscType_Engine_7:
+				{
+
+					const NscPCodeConstantJson *p;
+					p = (NscPCodeConstantJson *) pEntry ->pHeader;
+
+					snprintf (szParam, sizeof (szParam), "((json) \"%.*s\")",
 						(unsigned long) p -> nLength, p ->szString);
 				}
 				break;
