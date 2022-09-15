@@ -54,6 +54,7 @@ class CNscPStackEntry;
 
 int yylex (YYSTYPE* yylval, CNscContext& context);
 int yylex (YYSTYPE* yylval);
+void yyerror (const char *pszMessage);
 
 YYSTYPE NscBuildIdentifier (YYSTYPE p);
 YYSTYPE NscBuildObjectConstant (int nOID);
@@ -694,8 +695,10 @@ expression_statement:
 	| error
 		{
 			$$ = NULL;
-			if (yynerrs_ >= NscMaxSyntaxErrors)
+			if (yynerrs_ >= NscMaxSyntaxErrors) {
+				error("TOOMANY");
 				YYABORT;
+			}
 			// clear lookahead. Unless it's '}' because that confuses the unwinder
 			// and you get a lot of extra errors.
 			if (yyla.type_get() != 74)

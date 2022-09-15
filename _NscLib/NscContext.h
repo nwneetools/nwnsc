@@ -299,7 +299,11 @@ public:
 	virtual void yyerror (const char *pszMessage)
 	{
 		//pszMessage; // Get rid of warning 4100
-		GenerateError ("%s", pszMessage);
+		//GenerateError ("%s", pszMessage);
+		if (!strncmp("TOOMANY", pszMessage, 7))
+			GenerateMessage(NscMessage_ErrorTooManyErrors, NscMaxSyntaxErrors);
+		else
+			GenerateMessage (NscMessage_ErrorTokenSyntaxError, pszMessage);
 	}
 
 	// @cmember Get a PStackEntry
