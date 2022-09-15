@@ -97,7 +97,6 @@ YYSTYPE NscBuildBlankStatement ();
 YYSTYPE NscBuildMarkLine (int nIndex, YYSTYPE pStatement);
 void NscBuildSaveLine (int nIndex);
 void NscBuildCopyLine (int nDest, int nSource);
-bool NscBuildSyntaxError (int nToken, YYSTYPE yylval);
 %}
 
 %token IDENTIFIER INTEGER_CONST FLOAT_CONST STRING_CONST
