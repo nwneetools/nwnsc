@@ -34,8 +34,9 @@
   class CNscContext;
 %}
 
-%lex-param { CNscContext& context}
-%parse-param { CNscContext& context}
+%lex-param { CNscContext& ctxt}
+%parse-param { CNscContext& ctxt}
+%define parse.error verbose
  
 %{
 #include "Precomp.h"
@@ -693,17 +694,12 @@ expression_statement:
 	| error
 		{
 			$$ = NULL;
-			if (NscBuildSyntaxError (YYCHAR_NAME, YYLVAL))
+			if (yynerrs_ >= NscMaxSyntaxErrors)
 				YYABORT;
-			while (YYCHAR_NAME != EOF && YYCHAR_NAME != ';' && YYCHAR_NAME != '{' && YYCHAR_NAME != '}')
-			{
-				if (YYLVAL != NULL)
-					YYLVAL;
-				YYLA_EMPTY;
-				YYLA_CHARNAME_LEX;
-			}
-			if (YYCHAR_NAME == ';')
-				YYLA_EMPTY;
+			// clear lookahead. Unless it's '}' because that confuses the unwinder
+			// and you get a lot of extra errors.
+			if (yyla.type_get() != 74)
+				yyclearin;
 		}
 	;
 
@@ -1020,16 +1016,9 @@ translation_unit:
 	| error
 		{
 			$$ = NULL;
-			if (NscBuildSyntaxError (YYCHAR_NAME, YYLVAL))
+			if (yynerrs_ >= NscMaxSyntaxErrors)
 				YYABORT;
-			while (YYCHAR_NAME != EOF && YYCHAR_NAME != ';' && YYCHAR_NAME != '{' && YYCHAR_NAME != '}')
-			{
-				if (YYLVAL != NULL)
-					YYLVAL;
-				YYLA_EMPTY;
-				YYLA_CHARNAME_LEX;
-			}
-			YYLA_EMPTY;
+			yyclearin;
 		} 	
 	;
 

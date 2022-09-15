@@ -558,14 +558,9 @@ const char *NscGetActionName (int nAction, NscCompiler *pCompiler)
 //	g_pCtx->yyerror(s);
 //}
 //#else
-#if (NWN_BISON_3 || NWN_BISON_3_6)
 void yy::parser::error (const std::string& m)
-#else
-void yy::parser::error (const location_type& loc, const std::string& m)
-#endif
-
 {
-    context.yyerror(m.c_str());
+    ctxt.yyerror(m.c_str());
 }
 //#endif
 

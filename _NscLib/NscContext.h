@@ -298,8 +298,8 @@ public:
 
 	virtual void yyerror (const char *pszMessage)
 	{
-		pszMessage; // Get rid of warning 4100
-		// GenerateError ("%s", pszMessage);
+		//pszMessage; // Get rid of warning 4100
+		GenerateError ("%s", pszMessage);
 	}
 
 	// @cmember Get a PStackEntry
