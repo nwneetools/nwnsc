@@ -66,12 +66,6 @@ if (MSVC)
 	endforeach(flag_var)
 endif()
 
-if (BISON_VERSION VERSION_GREATER "3.6.0")
-   add_definitions(-DNWN_BISON_3_6=1)
-elseif (BISON_VERSION VERSION_GREATER "3.0.0")
-   add_definitions(-DNWN_BISON_3=1)
-endif (BISON_VERSION VERSION_GREATER "3.6.0")
-
 add_subdirectory(_NwnBaseLib)
 add_subdirectory(_NwnDataLib)
 add_subdirectory(_NwnUtilLib)
