@@ -168,7 +168,14 @@ enum NscType
 	NscType_String				= 8,
 	NscType_Object				= 9,
 	NscType_Vector				= 10,
-	NscType_Engine_0			= 16,
+	NscType_Engine_0			= 16, // effect
+	NscType_Engine_1			= 17, // event
+	NscType_Engine_2			= 18, // location
+	NscType_Engine_3			= 19, // talent
+	NscType_Engine_4			= 20, // itemproperty
+	NscType_Engine_5			= 21, // sqlquery
+	NscType_Engine_6			= 22, // cassowary
+	NscType_Engine_7			= 23, // json
 	NscType_Struct_0			= 32,
 
 	NscType__First_Compare		= 6,
@@ -471,6 +478,25 @@ struct NscPCodeConstantString
 	NscType			nType;
 	size_t			nLength;
 	char			szString [1];
+};
+
+struct NscPCodeConstantJson // CONST: same semantics as a string
+{
+	size_t			nOpSize;
+	NscPCode		nOpCode;
+	NscType			nType;
+	size_t			nLength;
+	char			szString [1];
+};
+
+#define LOCATION_PRESET_INVALID 0
+
+struct NscPCodeConstantLocation // CONST: same semantics as int
+{
+	size_t			nOpSize;
+	NscPCode		nOpCode;
+	NscType			nType;
+	INT32			lValue;
 };
 
 struct NscPCodeConstantObject

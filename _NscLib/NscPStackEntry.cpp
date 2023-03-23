@@ -178,6 +178,44 @@ void CNscPStackEntry::PushConstantInteger (int nValue)
 
 //-----------------------------------------------------------------------------
 //
+// @mfunc Push constant location type
+//
+// @parm int | nValue | Value to push
+//
+// @rdesc None.
+//
+//-----------------------------------------------------------------------------
+
+void CNscPStackEntry::PushConstantLocation (int nValue)
+{
+
+	//
+	// Make room for the pcode block
+	//
+
+	size_t nSize = sizeof (NscPCodeConstantInteger);
+	MakeRoom (nSize);
+
+	//
+	// Initialize the block
+	//
+
+	NscPCodeConstantInteger *p = (NscPCodeConstantInteger *) 
+		&m_pauchData [m_nDataSize];
+	p ->nOpSize = nSize;
+	p ->nOpCode = NscPCode_Constant;
+	p ->nType = NscType_Engine_2;
+	p ->lValue = nValue;
+
+	//
+	// Adjust the size of the entry
+	//
+
+	m_nDataSize += nSize;
+}
+
+//-----------------------------------------------------------------------------
+//
 // @mfunc Push constant float
 //
 // @parm float | fValue | Value to push
@@ -253,6 +291,57 @@ void CNscPStackEntry::PushConstantString (const char *pszString, int nLength)
 	p ->nOpSize = nSize;
 	p ->nOpCode = NscPCode_Constant;
 	p ->nType = NscType_String;
+	p ->nLength = nLength;
+	if (pszString)
+        memcpy (p ->szString, pszString, nLength);
+	p ->szString [nLength] = 0;
+
+	//
+	// Adjust the size of the entry
+	//
+
+	m_nDataSize += nSize;
+}
+
+//-----------------------------------------------------------------------------
+//
+// @mfunc Push constant json
+//
+// @parm const char * | pszString | raw json to push
+//
+// @parm int | nLength | Length of the json.  If -1, the length
+//		will be computed from the json.
+//
+// @rdesc None.
+//
+//-----------------------------------------------------------------------------
+
+void CNscPStackEntry::PushConstantJson (const char *pszString, int nLength)
+{
+
+	//
+	// If need be, get the string length
+	//
+
+	if (nLength == -1)
+		nLength = (int) strlen (pszString);
+
+	//
+	// Make room for the pcode block
+	//
+
+	size_t nSize = sizeof (NscPCodeConstantJson) + nLength;
+	MakeRoom (nSize);
+
+	//
+	// Initialize the block
+	//
+
+	NscPCodeConstantJson *p = (NscPCodeConstantJson *) 
+		&m_pauchData [m_nDataSize];
+	p ->nOpSize = nSize;
+	p ->nOpCode = NscPCode_Constant;
+	p ->nType = NscType_Engine_7;
 	p ->nLength = nLength;
 	if (pszString)
         memcpy (p ->szString, pszString, nLength);

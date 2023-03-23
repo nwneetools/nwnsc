@@ -140,6 +140,15 @@ bool NscCompilerInitialize (CNwnLoader *pLoader, int nVersion,
 	NscAddToken ("OBJECT_SELF",    OBJECT_SELF_CONST, pCompiler);
 	NscAddToken ("OBJECT_INVALID", OBJECT_INVALID_CONST, pCompiler);
 
+	NscAddToken ("LOCATION_INVALID", LOCATION_INVALID_CONST, pCompiler);
+
+	NscAddToken ("JSON_NULL", JSON_NULL_CONST, pCompiler);
+	NscAddToken ("JSON_FALSE", JSON_FALSE_CONST, pCompiler);
+	NscAddToken ("JSON_TRUE", JSON_TRUE_CONST, pCompiler);
+	NscAddToken ("JSON_OBJECT", JSON_OBJECT_CONST, pCompiler);
+	NscAddToken ("JSON_ARRAY", JSON_ARRAY_CONST, pCompiler);
+	NscAddToken ("JSON_STRING", JSON_STRING_CONST, pCompiler);
+
 	pCompiler ->NscGetCompilerState() ->m_fEnableExtensions = fEnableExtensions;
 
 	//

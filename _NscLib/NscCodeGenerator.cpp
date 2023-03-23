@@ -1200,6 +1200,12 @@ bool CNscCodeGenerator::CodeUnaryOp (NscCode nCode, NscType nType)
 		case NscType_Object:
 			m_pauchOut [1] = 6;
 			break;
+		case NscType_Engine_2:
+			m_pauchOut [1] = 0x12;
+			break;
+		case NscType_Engine_7:
+			m_pauchOut [1] = 0x17;
+			break;
 		default:
 			m_pCtx ->GenerateMessage (NscMessage_ErrorInternalCompilerError,
 				"invalid unary op type");
@@ -1709,6 +1715,22 @@ bool CNscCodeGenerator::CodeCONST (NscType nType, void *pData, const char *psz)
 					}
 					break;
 
+				case NscType_Engine_2:
+					{
+						UINT16 nLength = 0;
+						const char *sz = "";
+						CodeCONST (NscType_Engine_2, &nLength, sz);
+					}
+					break;
+
+				case NscType_Engine_7:
+					{
+						UINT16 nLength = 0;
+						const char *sz = "";
+						CodeCONST (NscType_Engine_7, &nLength, sz);
+					}
+					break;
+
 				case NscType_Object:
 					{
 						INT32 nObject = 0;
@@ -1756,9 +1778,11 @@ bool CNscCodeGenerator::CodeCONST (NscType nType, void *pData, const char *psz)
 
 	//
 	// If we have a simple value (integer and object id)
+	// NB: JSON (engst7) also encodes as as string-ish, so fall through
+	//     for that one.
 	//
 
-	else if (nType != NscType_String)
+	else if (nType != NscType_String && nType != NscType_Engine_7)
 	{
 		if (m_pauchOut + 4 > m_pauchCodeEnd)
 			ExpandOutputBuffer ();
@@ -3875,6 +3899,18 @@ do_binaryop:;
 							CodeCONST (NscType_Float, &p ->v [0]);
 							CodeCONST (NscType_Float, &p ->v [1]);
 							CodeCONST (NscType_Float, &p ->v [2]);
+						}
+						break;
+					case NscType_Engine_2:
+						{
+							NscPCodeConstantLocation *p = (NscPCodeConstantLocation *) pHeader;
+							CodeCONST (p ->nType, &p ->lValue);
+						}
+						break;
+					case NscType_Engine_7:
+						{
+							NscPCodeConstantJson *p = (NscPCodeConstantJson *) pHeader;
+							CodeCONST (p ->nType, &p ->nLength, p ->szString);
 						}
 						break;
 					default:

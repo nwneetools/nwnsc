@@ -3840,6 +3840,8 @@ int CNscContext::GetTypeSize (NscType nType)
 		case NscType_Float:
 		case NscType_String:
 		case NscType_Object:
+		case NscType_Engine_2: // location
+		case NscType_Engine_7: // json
 			return 1;
 
 		case NscType_Vector:

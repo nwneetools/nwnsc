@@ -167,6 +167,16 @@ bool NscPushDefaultValue (CNscPStackEntry *pOut, NscType nType)
 			pOut ->SetType (NscType_String);
 			return true;
 
+		case NscType_Engine_2:
+			pOut ->PushConstantLocation(LOCATION_PRESET_INVALID);
+			pOut ->SetType (NscType_Engine_2);
+			return true;
+
+		case NscType_Engine_7:
+			pOut ->PushConstantJson ("");
+			pOut ->SetType (NscType_Engine_7);
+			return true;
+
 		case NscType_Object:
 			pOut ->PushConstantObject (1); // OBJECT_INVALID
 			pOut ->SetType (NscType_Object);
@@ -648,6 +658,34 @@ bool NscBuildSyntaxError (int nToken, YYSTYPE yylval)
 				pszToken = "OBJECT_INVALID";
 				break;
 
+			case LOCATION_INVALID_CONST:
+				pszToken = "LOCATION_INVALID";
+				break;
+
+			case JSON_NULL_CONST:
+				pszToken = "JSON_NULL";
+				break;
+
+			case JSON_FALSE_CONST:
+				pszToken = "JSON_FALSE";
+				break;
+
+			case JSON_TRUE_CONST:
+				pszToken = "JSON_TRUE";
+				break;
+
+			case JSON_OBJECT_CONST:
+				pszToken = "JSON_OBJECT";
+				break;
+
+			case JSON_ARRAY_CONST:
+				pszToken = "JSON_ARRAY";
+				break;
+
+			case JSON_STRING_CONST:
+				pszToken = "JSON_STRING";
+				break;
+
 			case BREAK:
 				pszToken = "break";
 				break;
@@ -885,6 +923,32 @@ YYSTYPE NscBuildObjectConstant (int nOID)
 	CNscPStackEntry *pOut = g_pCtx ->GetPStackEntry (__FILE__, __LINE__);
 	pOut ->SetType (NscType_Object);
 	pOut ->PushConstantObject ((UINT32) nOID);
+	return pOut;
+}
+
+YYSTYPE NscBuildLocationConstant (int nLocationType)
+{
+	CNscPStackEntry *pOut = g_pCtx ->GetPStackEntry (__FILE__, __LINE__);
+	pOut ->SetType (NscType_Engine_2);
+	pOut ->PushConstantLocation(nLocationType);
+	return pOut;
+}
+
+//-----------------------------------------------------------------------------
+//
+// @func Build a json constant
+//
+// @parm const char* | rawEmbed | raw json string
+//
+// @rdesc Pointer to a new parser stack entry.
+//
+//-----------------------------------------------------------------------------
+
+YYSTYPE NscBuildJsonConstant (const char* rawEmbed)
+{
+	CNscPStackEntry *pOut = g_pCtx ->GetPStackEntry (__FILE__, __LINE__);
+	pOut ->SetType (NscType_Engine_7);
+	pOut ->PushConstantJson(rawEmbed);
 	return pOut;
 }
 

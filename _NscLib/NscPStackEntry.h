@@ -98,6 +98,10 @@ public:
 
 	void PushConstantInteger (int nValue);
 
+	// @cmember Push constant location preset type
+
+	void PushConstantLocation (int nValue);
+
 	// @cmember Push constant float
 
 	void PushConstantFloat (float fValue);
@@ -105,6 +109,10 @@ public:
 	// @cmember Push constant string
 
 	void PushConstantString (const char *pszString, int nLength = -1);
+
+	// @cmember Push constant json
+
+	void PushConstantJson (const char *pszString, int nLength = -1);
 
 	// @cmember Push constant object
 
