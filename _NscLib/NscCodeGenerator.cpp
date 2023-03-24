@@ -256,10 +256,12 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 	// Add our main
 	//
 
-	pSymbol ->ulFlags |= NscSymFlag_Referenced;
-	m_anFunctions .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
-	GatherUsed (pSymbol);
-	
+	if (pSymbol)
+	{
+		pSymbol->ulFlags |= NscSymFlag_Referenced;
+		m_anFunctions.push_back(m_pCtx->GetSymbolOffset(pSymbol));
+		GatherUsed(pSymbol);
+	}
 	//
 	// Initialize the stack depths
 	//
