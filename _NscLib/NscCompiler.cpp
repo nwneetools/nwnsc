@@ -419,8 +419,25 @@ NscResult NscCompileScript (CNwnLoader *pLoader, const char *pszName,
 
 	try
 	{
-		if (!sGen .GenerateOutput (pCodeOutput, pDebugOutput, fIgnoreIncludes))
+		if (sGen .GenerateOutput (pCodeOutput, pDebugOutput, fIgnoreIncludes))
+		{
+			//
+			// If using the -c flag, prevent creating a compiled file.
+			//
+
+			if (!fIgnoreIncludes && !sCtx .HasMain ())
+			{
+				if (fAllocated)
+					free (pauchData);
+				return NscResult_Include;
+			}
+		}
+		else
 			return NscResult_Failure;
+
+
+		//if (!sGen .GenerateOutput (pCodeOutput, pDebugOutput, fIgnoreIncludes))
+		//	return NscResult_Failure;
 	}
 	catch (std::exception)
 	{

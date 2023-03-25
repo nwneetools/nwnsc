@@ -256,10 +256,13 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 	// Add our main
 	//
 
-	pSymbol ->ulFlags |= NscSymFlag_Referenced;
-	m_anFunctions .push_back (m_pCtx ->GetSymbolOffset (pSymbol));
-	GatherUsed (pSymbol);
-	
+	if (pSymbol)
+	{
+		pSymbol->ulFlags |= NscSymFlag_Referenced;
+		m_anFunctions.push_back(m_pCtx->GetSymbolOffset(pSymbol));
+		GatherUsed(pSymbol);
+	}
+
 	//
 	// Initialize the stack depths
 	//
@@ -598,8 +601,12 @@ bool CNscCodeGenerator::GenerateOutput (CNwnStream *pCodeOutput,
 		return false;
 	
 	//
-	// Write the output
+	// Write the output.
+	// Return early if file is not executable.
 	//
+
+	if (pSymbol == NULL)
+		return true;
 
 	UINT32 ulSize = (UINT32) (m_pauchOut - m_pauchCode);
 	WriteINT32 (&m_pauchCode [9], ulSize);
