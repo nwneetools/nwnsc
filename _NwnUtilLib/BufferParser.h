@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <cstddef>
+#include <cstdint>
 #endif
 
 namespace swutil
