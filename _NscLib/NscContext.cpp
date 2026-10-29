@@ -1861,11 +1861,17 @@ try_again:;
 					*p = 0;
 
 				//
+				// Make all includes lowercase
+				//
+				size_t i;
+				for(i = 0; pszTemp[i] != '\0'; i++)
+					pszTemp[i] = tolower(pszTemp[i]);
+
+				//
 				// Search the current list of included files and see
 				// if we have already done it
 				//
 
-				size_t i;
 				for (i = 0; i < m_asFiles .size (); i++)
 				{
 					if (stricmp (m_asFiles [i] .strName .c_str (), pszTemp) == 0)
