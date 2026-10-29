@@ -2,11 +2,17 @@ name: C/C++ CI
 
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Build
         uses: docker://nwneetools/nwnsc-docker-builder:071c269
