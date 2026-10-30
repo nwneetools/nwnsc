@@ -12,6 +12,19 @@ Available under [Releases](https://github.com/nwneetools/nwnsc/releases).
 
 Run `nwnsc -h` from the command line to print the help message.
 
+## Building
+
+Building requires CMake, a C++11 compiler, and Bison 3.0 or newer. On Windows,
+install the `winflexbison3` Chocolatey package. On macOS, use Homebrew Bison
+instead of the older system version (set `-DBISON_EXECUTABLE="$(brew --prefix bison)/bin/bison"`
+when configuring).
+
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+ctest --test-dir build --build-config Release --output-on-failure
+```
+
 ## Docker
 
 The image `nwneetools/nwnsc` exists to supplement container based workflows.

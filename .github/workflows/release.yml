@@ -50,12 +50,15 @@ jobs:
           echo "$(brew --prefix bison)/bin" >> "$GITHUB_PATH"
       - name: Install Windows dependencies
         if: runner.os == 'Windows'
-        run: choco install winflexbison --yes --no-progress
+        run: choco install winflexbison3 --yes --no-progress
 
       - name: Configure nwnsc
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - name: Build nwnsc
         run: cmake --build build --config Release --parallel
+      - name: Parser regression tests
+        working-directory: build
+        run: ctest --build-config Release --output-on-failure
       - name: Smoke test
         env:
           BINARY: ${{ matrix.binary }}

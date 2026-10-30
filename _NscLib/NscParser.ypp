@@ -29,6 +29,7 @@
 **
 */
 
+%require "3.0"
 %defines
 %{
   class CNscContext;
@@ -700,7 +701,7 @@ expression_statement:
 			}
 			// clear lookahead. Unless it's '}' because that confuses the unwinder
 			// and you get a lot of extra errors.
-			if (yyla.type_get() != 74)
+			if (yyla.type_get() != yytranslate_('}'))
 				yyclearin;
 		}
 	;

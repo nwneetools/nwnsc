@@ -14,5 +14,5 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Build
-        uses: docker://nwneetools/nwnsc-docker-builder:071c269
+      - name: Build and test with the legacy Linux toolchain
+        run: docker build --target nwnsc --progress plain .

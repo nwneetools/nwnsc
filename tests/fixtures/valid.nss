@@ -1,0 +1,1 @@
+void main() { PrintString("ok"); }
