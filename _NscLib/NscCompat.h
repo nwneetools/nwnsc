@@ -1,29 +1,8 @@
+/* NscCompat.h
+ */
 
 
-/* Bison 3 does not define some of these
-   values. YYEMPTY is needed in all cases
-   the NWN_BISON_3 macro is defined by the CMakeLists.txt
-   based on the version of bison found
-*/
-#ifdef NWN_BISON_3_6
-#   define YYCHAR_NAME yyla.kind()
-#   define YYLA_EMPTY yyla.clear()
-#   define YYLVAL yyla.value
-#   define YYLA_CHARNAME_LEX yyla.kind_ = yytranslate_(yylex(&YYLVAL,context))
-#else
-#  define YYEMPTY              (-2)
-#  ifdef NWN_BISON_3
-#      define YYLVAL yyla.value
-#      define YYCHAR_NAME yyla.type
-#  else
-#      define YYCHAR_NAME yychar
-#      define YYLVAL yylval
-#  endif
-#  define YYLA_EMPTY  YYCHAR_NAME = YYEMPTY
-#  define YYLA_CHARNAME_LEX YYCHAR_NAME = yylex(&YYLVAL, context)
-#endif
-
-
+// This much match what's generated in NscParser.hpp
 enum nwtoken {
     IDENTIFIER = 258,
     INTEGER_CONST = 259,

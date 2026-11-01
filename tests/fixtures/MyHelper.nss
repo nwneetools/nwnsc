@@ -1,0 +1,1 @@
+void MyHelper() { PrintString("ok"); }

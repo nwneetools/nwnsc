@@ -74,6 +74,7 @@ enum NscConstants
 	NscMaxScript		= 0x4000000,
 	NscMaxHash			= 64,
 	NscMaxLabelSize		= 16,		// internal setting only, don't sweat it
+	NscMaxSyntaxErrors      = 32,
 };
 
 //-----------------------------------------------------------------------------
